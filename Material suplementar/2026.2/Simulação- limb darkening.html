@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Escurecimento de Limbo (Limb Darkening)</title>
+<style>
+  :root {
+    --bg-color: #0b0c10;
+    --card-bg: #1f2833;
+    --text-color: #c5c6c7;
+    --accent-color: #66fcf1;
+    --highlight: #45f3ff;
+  }
+  
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .container {
+    max-width: 900px;
+    width: 100%;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    box-sizing: border-box;
+  }
+
+  h1 {
+    color: #fff;
+    text-align: center;
+    font-size: 1.6rem;
+    margin-top: 0;
+    border-bottom: 2px solid var(--accent-color);
+    padding-bottom: 10px;
+  }
+
+  p.intro {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .grid-layout {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  @media(min-width: 768px) {
+    .grid-layout {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .canvas-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #000;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #333;
+  }
+
+  .canvas-title {
+    color: var(--accent-color);
+    font-weight: bold;
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+
+  canvas {
+    max-width: 100%;
+    height: auto;
+    background: #000;
+    border-radius: 4px;
+    touch-action: none; /* impede rolagem da tela ao arrastar no canvas */
+  }
+
+  .controls-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    justify-content: center;
+  }
+
+  .slider-group {
+    background: rgba(0,0,0,0.2);
+    padding: 12px;
+    border-radius: 6px;
+    border-left: 4px solid var(--accent-color);
+  }
+
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+  }
+
+  input[type=range] {
+    width: 100%;
+    background: #333;
+    accent-color: var(--accent-color);
+  }
+
+  .data-readout {
+    background: rgba(0,0,0,0.4);
+    padding: 15px;
+    border-radius: 6px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    border: 1px dashed var(--accent-color);
+  }
+
+  .math-card {
+    background: rgba(255,255,255,0.05);
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .math-eq {
+    text-align: center;
+    font-size: 1.1rem;
+    color: #fff;
+    margin: 8px 0;
+  }
+
+  .alert-info {
+    font-size: 0.8rem;
+    color: #ffd166;
+    text-align: center;
+    margin-top: 5px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Escurecimento de Limbo Estelar</h1>
+  <p class="intro">
+    Toque ou arraste o dedo sobre a estrela para simular a mudança na linha de visada do observador de acordo com a aproximação de Eddington-Barbier.
+  </p>
+
+  <div class="grid-layout">
+    <!-- LADO ESQUERDO: GRÁFICOS E SIMULAÇÕES -->
+    <div class="canvas-container">
+      <div class="canvas-title">Estrela Projetada no Céu (Vista do Telescópio)</div>
+      <canvas id="starCanvas" width="300" height="300"></canvas>
+      <div class="alert-info">▲ Toque em qualquer lugar do disco estelar acima</div>
+      
+      <div class="canvas-title" style="margin-top: 20px;">Filtro Atmosférico Local (Profundidade de Visada)</div>
+      <canvas id="atmosCanvas" width="300" height="150"></canvas>
+    </div>
+
+    <!-- LADO DIREITO: CONTROLES E FÍSICA -->
+    <div class="controls-panel">
+      <div class="slider-group">
+        <div class="slider-label">
+          <span>Coeficiente de Escurecimento (u):</span>
+          <span id="u_val" style="color:var(--accent-color)">0.60</span>
+        </div>
+        <input type="range" id="u_coeff" min="0" max="1" step="0.01" value="0.60">
+      </div>
+
+      <div class="math-card">
+        <strong>Lei Linear de Escurecimento de Limbo:</strong>
+        <div class="math-eq">I(μ) / I(1) = 1 - u · (1 - μ)</div>
+        Onde <strong>μ = cos(θ)</strong> representa o cosseno do ângulo de saída dos fótons em relação à normal local da superfície estelar.
+      </div>
+
+      <div class="data-readout" id="metrics">
+        <strong>[DADOS DO PONTO DE VISADA]</strong><br>
+        Posição no Disco (r/R): <span id="out_r">0.00</span><br>
+        Ângulo de Saída (θ): <span id="out_theta">0.0°</span><br>
+        Cosseno Diretor (μ): <span id="out_mu">1.00</span><br>
+        Profundidade de Origem (τ): <span id="out_tau">1.00 (Profundo)</span><br>
+        Caminho Óptico Relativo (ds/dz): <span id="out_ds">1.00</span><br>
+        Brilho Observado I(μ)/I(1): <span id="out_int">100% (Brilhante)</span>
+      </div>
+
+      <div class="math-card" style="border-left: 4px solid #ffd166;">
+        <strong>Conexão Física (Eddington-Barbier):</strong><br>
+        No centro do disco (μ = 1), enxergamos camadas mais quentes e profundas (τ ≈ 1). No limbo (μ → 0), nossa linha de visada atravessa o gás inclinadamente, sofrendo muita absorção. Só conseguimos ver camadas muito rasas (τ ≈ μ), que são mais frias e escuras!
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const starCanvas = document.getElementById('starCanvas');
+  const starCtx = starCanvas.getContext('2d');
+  const atmosCanvas = document.getElementById('atmosCanvas');
+  const atmosCtx = atmosCanvas.getContext('2d');
+
+  const uSlider = document.getElementById('u_coeff');
+  const uValLabel = document.getElementById('u_val');
+
+  // Variáveis globais do estado de interação
+  let pointerX = starCanvas.width / 2;
+  let pointerY = starCanvas.height / 2;
+  const R = 130; // Raio da estrela no canvas (pixels)
+  const cx = starCanvas.width / 2;
+  const cy = starCanvas.height / 2;
+
+  // Função para desenhar o disco estelar com efeito de Limb Darkening pixel a pixel
+  function renderStar() {
+    const u = parseFloat(uSlider.value);
+    uValLabel.textContent = u.toFixed(2);
+
+    const imgData = starCtx.createImageData(starCanvas.width, starCanvas.height);
+    const data = imgData.data;
+
+    for (let y = 0; y < starCanvas.height; y++) {
+      for (let x = 0; x < starCanvas.width; x++) {
+        const dx = x - cx;
+        const dy = y - cy;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const idx = (y * starCanvas.width + x) * 4;
+
+        if (dist <= R) {
+          const normDist = dist / R; // r/R variando de 0 a 1
+          const mu = Math.sqrt(1 - normDist*normDist); // cos(theta)
+          const intensity = 1 - u * (1 - mu);
+
+          // Efeito cromático: camadas centrais mais quentes (amarelo-branco) 
+          // e bordas mais frias (vermelho-laranja profundo)
+          const red = Math.min(255, (230 + 25 * mu) * intensity);
+          const green = Math.min(255, (50 + 190 * (mu * mu)) * intensity);
+          const blue = Math.min(255, (10 + 130 * (mu * mu * mu)) * intensity);
+
+          data[idx]     = red;   // R
+          data[idx + 1] = green; // G
+          data[idx + 2] = blue;  // B
+          data[idx + 3] = 255;   // A (Opaco)
+        } else {
+          // Espaço de fundo (vácuo escuro)
+          data[idx]     = 5;
+          data[idx + 1] = 5;
+          data[idx + 2] = 12;
+          data[idx + 3] = 255;
+        }
+      }
+    }
+
+    starCtx.putImageData(imgData, 0, 0);
+    drawCrosshair();
+    updatePhysics();
+  }
+
+  // Desenha a mira interativa no disco estelar
+  function drawCrosshair() {
+    starCtx.beginPath();
+    starCtx.arc(pointerX, pointerY, 6, 0, 2*Math.PI);
+    starCtx.strokeStyle = '#66fcf1';
+    starCtx.lineWidth = 2;
+    starCtx.stroke();
+
+    // Circunferência limite do limbo
+    starCtx.beginPath();
+    starCtx.arc(cx, cy, R, 0, 2*Math.PI);
+    starCtx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    starCtx.lineWidth = 1;
+    starCtx.stroke();
+  }
+
+  // Calcula toda a física estelar baseada no ponto selecionado
+  function updatePhysics() {
+    const u = parseFloat(uSlider.value);
+    const dx = pointerX - cx;
+    const dy = pointerY - cy;
+    let dist = Math.sqrt(dx*dx + dy*dy);
+    
+    if (dist > R) dist = R; // limita o ponteiro à borda estelar
+
+    const r_R = dist / R;
+    const mu = Math.sqrt(1 - r_R*r_R);
+    const theta_rad = Math.acos(mu);
+    const theta_deg = theta_rad * (180 / Math.PI);
+    const intensity_pct = (1 - u * (1 - mu)) * 100;
+    const ds_dz = mu > 0 ? (1 / mu) : Infinity;
+
+    // Atualiza o painel de texto
+    document.getElementById('out_r').textContent = r_R.toFixed(3);
+    document.getElementById('out_theta').textContent = theta_deg.toFixed(1) + "°";
+    document.getElementById('out_mu').textContent = mu.toFixed(3);
+    document.getElementById('out_tau').textContent = `${mu.toFixed(2)} (${r_R < 0.2 ? 'Profundo' : r_R > 0.85 ? 'Superficial' : 'Intermediário'})`;
+    document.getElementById('out_ds').textContent = mu > 0.05 ? ds_dz.toFixed(2) : "Incalculável (Caminho rasante)";
+    document.getElementById('out_int').textContent = intensity_pct.toFixed(1) + "%";
+
+    renderAtmosphereLayers(mu, theta_rad);
+  }
+
+  // Desenha o gráfico de profundidade da atmosfera no canvas secundário
+  function renderAtmosphereLayers(mu, theta) {
+    atmosCtx.clearRect(0, 0, atmosCanvas.width, atmosCanvas.height);
+
+    // Linha de contorno do Topo da Atmosfera (z_max / tau = 0)
+    atmosCtx.beginPath();
+    atmosCtx.moveTo(20, 20);
+    atmosCtx.lineTo(280, 20);
+    atmosCtx.strokeStyle = '#66fcf1';
+    atmosCtx.lineWidth = 2;
+    atmosCtx.stroke();
+    atmosCtx.fillStyle = '#66fcf1';
+    atmosCtx.font = '10px Arial';
+    atmosCtx.fillText("Topo da Atmosfera (τ = 0)", 25, 15);
+
+    // Linha de base da fotosfera visível (z_min / tau = 1)
+    atmosCtx.beginPath();
+    atmosCtx.moveTo(20, 110);
+    atmosCtx.lineTo(280, 110);
+    atmosCtx.strokeStyle = '#ff5e62';
+    atmosCtx.lineWidth = 1.5;
+    atmosCtx.stroke();
+    atmosCtx.fillStyle = '#ff5e62';
+    atmosCtx.fillText("Camadas Profundas (τ ≈ 1)", 25, 125);
+
+    // Desenha o feixe inclinado escapando para o espaço
+    const originX = 150;
+    // O ponto de origem vertical no gás segue τ ≈ μ (aproximação de Eddington-Barbier)
+    // Se μ = 1 (centro), z_origem fica na linha de baixo (τ = 1). Se μ = 0 (limbo), z_origem vai para a linha de cima (τ = 0).
+    const originY = 20 + mu * 90; 
+
+    // Calcula os componentes do vetor inclinado baseado no ângulo theta
+    const length = 120;
+    const endX = originX + length * Math.sin(theta);
+    const endY = originY - length * Math.cos(theta);
+
+    // Desenha o vetor real do caminho do feixe (ds)
+    atmosCtx.beginPath();
+    atmosCtx.moveTo(originX, originY);
+    atmosCtx.lineTo(endX, endY);
+    atmosCtx.strokeStyle = '#ffbc00';
+    atmosCtx.lineWidth = 3;
+    atmosCtx.stroke();
+
+    // Desenha a projeção vertical (dz)
+    atmosCtx.beginPath();
+    atmosCtx.moveTo(originX, originY);
+    atmosCtx.lineTo(originX, 20);
+    atmosCtx.strokeStyle = 'rgba(255,255,255,0.4)';
+    atmosCtx.setLineDash([4, 4]);
+    atmosCtx.lineWidth = 1.5;
+    atmosCtx.stroke();
+    atmosCtx.setLineDash([]);
+
+    // Identificação dos caminhos
+    atmosCtx.fillStyle = '#ffbc00';
+    atmosCtx.fillText(`Caminho Real (ds)`, originX + 25, originY - 40);
+    atmosCtx.fillStyle = 'rgba(255,255,255,0.7)';
+    atmosCtx.fillText(`dz`, originX - 18, (originY + 20)/2);
+
+    // Desenha o átomo/ponto de emissão do fóton
+    atmosCtx.beginPath();
+    atmosCtx.arc(originX, originY, 6, 0, 2*Math.PI);
+    atmosCtx.fillStyle = '#ffbc00';
+    atmosCtx.fill();
+  }
+
+  // Captura interações de toque e mouse
+  function handleInteraction(e) {
+    const rect = starCanvas.getBoundingClientRect();
+    const scaleX = starCanvas.width / rect.width;
+    const scaleY = starCanvas.height / rect.height;
+
+    let clientX, clientY;
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    const mouseX = (clientX - rect.left) * scaleX;
+    const mouseY = (clientY - rect.top) * scaleY;
+
+    // Garante que a mira só pode ser movida dentro do limite do raio estelar
+    const dx = mouseX - cx;
+    const dy = mouseY - cy;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+
+    if (dist <= R) {
+      pointerX = mouseX;
+      pointerY = mouseY;
+    } else {
+      // Se tocar fora, projeta o ponto na borda mais externa (limbo)
+      pointerX = cx + (dx / dist) * R;
+      pointerY = cy + (dy / dist) * R;
+    }
+
+    renderStar();
+  }
+
+  // Ouvintes de Eventos de Mouse
+  starCanvas.addEventListener('mousedown', (e) => {
+    handleInteraction(e);
+    window.addEventListener('mousemove', handleInteraction);
+  });
+  window.addEventListener('mouseup', () => {
+    window.removeEventListener('mousemove', handleInteraction);
+  });
+
+  // Ouvintes de Eventos de Touch (Celulares e Tablets)
+  starCanvas.addEventListener('touchstart', (e) => {
+    handleInteraction(e);
+    window.addEventListener('touchmove', handleInteraction, { passive: false });
+  });
+  window.addEventListener('touchend', () => {
+    window.removeEventListener('touchmove', handleInteraction);
+  });
+
+  uSlider.addEventListener('input', renderStar);
+
+  // Inicialização Inicial
+  renderStar();
+</script>
+
+</body>
+</html>
