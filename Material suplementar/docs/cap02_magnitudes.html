@@ -1,0 +1,1068 @@
+<meta charset="utf-8">
+<title>Magnitudes Estelares</title>
+<meta name="description" content="Módulo interativo do Capítulo 2: relação de Pogson, módulo de distância, diagrama cor-magnitude e lei de Wien.">
+<link rel="stylesheet" href="assets/estilo.css">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)'], ['$', '$']],
+    displayMath: [['\\[', '\\]'], ['$$', '$$']],
+    macros: { sen: '\\operatorname{sen}' }
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.0/plotly.min.js"></script>
+
+<div class="topo">
+  <div class="miolo">
+    <a href="index.html">&larr; Índice do livro</a>
+    <span class="sep">·</span>
+    <span class="titulo-livro">Estrutura e Evolução Estelar — Notas de Aula (UFS)</span>
+    <span class="sep">·</span>
+    <!-- TODO: confirmar URL do GitHub Pages / repositório -->
+    <a href="#" title="TODO: confirmar link do repositório no GitHub">Repositório no GitHub</a>
+  </div>
+</div>
+
+<div class="pagina">
+
+<h1>Capítulo 2 — Magnitudes Estelares</h1>
+<p class="subtitulo">Transcrição fiel das notas de aula, com módulos interativos de exploração.</p>
+
+<p>As magnitudes estelares — e, também, de todos os astros — são um parâmetro
+muito importante na caracterização de objetos astronômicos, pois são de
+fácil determinação e carregam muitas informações sobre os corpos.</p>
+
+<h2>A escala de Hiparco e a relação de Pogson</h2>
+
+<p>Hiparco catalogou, por volta de 130 a.C., cerca de \(10^3\) estrelas,
+classificando-as em uma escala de magnitude: as estrelas de \(1^{\text{a}}\)
+magnitude eram as mais brilhantes, e as de \(6^{\text{a}}\) magnitude, as menos
+brilhantes. As observações de Hiparco foram feitas apenas com o olho humano,
+à medida que os astros ficavam visíveis ao anoitecer.</p>
+
+<p>Pogson (1856) propôs que o sistema descrito por Hiparco foi baseado na
+percepção do olho humano, que segue uma escala logarítmica, de forma que
+uma estrela de magnitude 1 é 100 vezes mais brilhante que uma de magnitude
+6, onde</p>
+
+\[
+m_1 - m_2 = k\,\log_{10}\!\left(\frac{F_1}{F_2}\right).
+\tag{2.1}
+\]
+
+<p>Logo,</p>
+
+\[
+1 - 6 = k\,\log_{10}(100) \quad\Longrightarrow\quad -5 = k\cdot 2
+\quad\Longrightarrow\quad \boxed{k = -2{,}5}.
+\tag{2.2}
+\]
+
+<p>Assim, podemos descrever a magnitude aparente de uma estrela como</p>
+
+\[
+\boxed{m_\lambda = -2{,}5\,\log_{10}(F_\lambda) + \text{const}}\,,
+\tag{2.3}
+\]
+
+<p>onde \(m_\lambda\) e \(F_\lambda\) são grandezas que dependem do comprimento de
+onda observado do astro: elas assumem diferentes valores para cada \(\lambda\).</p>
+
+<div class="caixa atencao">
+  <div class="rotulo">Observação — Origem histórica da relação de Pogson</div>
+  <div class="conteudo">
+    <p>A escolha \(k=-2{,}5\) não é arbitrária: ela foi calibrada exatamente para
+    reproduzir, com um número redondo, a escala perceptual de seis magnitudes
+    já em uso desde Hiparco. O sinal negativo é responsável pela convenção,
+    por vezes contraintuitiva, de que <em>objetos mais brilhantes têm
+    magnitude menor</em> (inclusive negativa, no caso de Sirius, Vênus, ou o
+    próprio Sol).</p>
+  </div>
+</div>
+
+<h2>Módulo interativo 1 — Relação de Pogson</h2>
+
+<div class="modulo">
+  <div class="rotulo">m₁ − m₂ = −2,5 log₁₀(F₁/F₂)</div>
+  <div class="corpo">
+    <div class="controles">
+      <div class="controle">
+        <label for="m1-razao">Razão de fluxo F₁/F₂ <span class="valor" id="m1-razao-valor">1</span></label>
+        <input type="range" id="m1-razao" min="-3" max="3" step="0.01" value="0">
+      </div>
+    </div>
+    <div id="m1-grafico" class="grafico"></div>
+    <div class="saida">
+      Diferença de magnitude correspondente:
+      \(m_1-m_2 = \) <strong id="m1-dm">0,00</strong>.
+      Verifique os pontos de referência da definição: \(F_1/F_2=100\)
+      dá exatamente \(m_1-m_2=-5\), e \(F_1/F_2=1/100\) dá \(m_1-m_2=+5\)
+      — a calibração original de Pogson.
+    </div>
+  </div>
+</div>
+
+<h2>O sistema de Vega e o espectro de referência</h2>
+
+<p>Por convenção, define-se que a estrela Vega tem magnitude zero em qualquer
+comprimento de onda observado, assim que</p>
+
+\[
+m_\lambda^{\mathrm{Vega}} = 0.
+\tag{2.4}
+\]
+
+<p>Se uma estrela tem magnitude maior que a de Vega, \(m_{S,\lambda}>0\); se
+menor, \(m_{S,\lambda}<0\); se similar, \(m_{S,\lambda}\approx 0\).</p>
+
+<div class="caixa atencao">
+  <div class="rotulo">Observação — Vega igual a zero é uma calibração aproximada, não um valor exato</div>
+  <div class="conteudo">
+    <p>A Equação (2.4) descreve a convenção <em>histórica</em> do
+    sistema Johnson \(UBV\): Vega (e, mais precisamente, um pequeno conjunto de
+    estrelas-padrão do tipo A0V próximas a ela) foi escolhida como referência
+    de fluxo, com magnitude e cores aproximadamente nulas em todas as bandas.
+    Não se trata, porém, de um valor exato por definição fundamental —
+    fotometria moderna de alta precisão mostra que Vega tem \(V\approx0{,}03\)
+    (o valor efetivamente adotado na calibração original do sistema) e, em
+    medições independentes mais recentes, \(V\approx0{,}026\), com
+    \(B-V\approx-0{,}001\) a \(-0{,}009\) conforme a fonte — pequenos desvios,
+    mas não exatamente zero (Bessell 2005). Além disso, nem todo sistema
+    de magnitudes usa Vega como referência: o sistema \(AB\) (usado, por
+    exemplo, no SDSS mencionado adiante) é calibrado a partir de uma
+    densidade de fluxo constante em frequência,
+    \(f_\nu=3631\,\mathrm{Jy}\) (\(1\,\mathrm{Jy}=10^{-26}\,\mathrm{W\,m^{-2}\,Hz^{-1}}\)), sem
+    qualquer referência a uma estrela real (Bessell 2005).</p>
+  </div>
+</div>
+
+<h2 id="cores">Cores estelares</h2>
+
+<p>Definimos cor como sendo a diferença entre duas magnitudes aparentes:</p>
+
+\[
+\boxed{\text{cor} = m_{\lambda_1} - m_{\lambda_2}}\,.
+\tag{2.5}
+\]
+
+<p>\(B-V\) é uma cor. Se \(B-V<0\), dizemos que a estrela é azulada, com a banda
+\(B\) tendo fluxo mais forte. Também é menos brilhante que Vega.</p>
+
+<div class="caixa contexto">
+  <div class="rotulo">Contexto astrofísico — Sistema fotométrico UBVRI (Johnson-Cousins)</div>
+  <div class="conteudo">
+    <p>A cor \(B-V\) pertence ao sistema fotométrico de banda larga mais tradicional
+    da astronomia, o sistema <em>Johnson-Cousins</em> (\(UBVRI\)), cujas bandas
+    cobrem do ultravioleta próximo (\(U\), \(\approx365\,\mathrm{nm}\)) ao
+    infravermelho próximo (\(I\), \(\approx806\,\mathrm{nm}\)), passando pelo
+    azul (\(B\), \(\approx445\,\mathrm{nm}\)) e pelo visível (\(V\),
+    \(\approx551\,\mathrm{nm}\)). Esse sistema foi definido a partir de um
+    conjunto de estrelas-padrão cujas magnitudes são conhecidas com grande
+    precisão, permitindo calibrar observações feitas em qualquer telescópio
+    (Bessell 2005).</p>
+  </div>
+</div>
+
+<div class="caixa leitura">
+  <div class="rotulo">Leituras complementares e referências atuais — Fotometria de precisão em levantamentos modernos</div>
+  <div class="conteudo">
+    <p>O sistema Johnson-Cousins permanece a referência histórica, mas
+    levantamentos modernos definem seus próprios sistemas fotométricos,
+    otimizados para grandes volumes de dados: o <em>Sloan Digital Sky
+    Survey</em> (SDSS, filtros \(u,g,r,i,z\)), o <em>Pan-STARRS1</em> e a missão
+    <em>Gaia</em> da ESA. A Gaia fornece fotometria em três bandas (\(G\), \(G_{BP}\),
+    \(G_{RP}\)) e espectros de baixa resolução para centenas de milhões de
+    fontes, a partir dos quais é possível sintetizar magnitudes em praticamente
+    qualquer sistema fotométrico padrão, incluindo o próprio \(UBVRI\)
+    (Montegriffo et al. 2023). Para uma revisão completa dos sistemas
+    fotométricos padrão e de suas transformações mútuas, ver
+    Bessell (2005).</p>
+  </div>
+</div>
+
+<h2>Extinção interestelar e avermelhamento</h2>
+
+<p>Temos também que</p>
+
+\[
+E(B-V) = A_B - A_V\,,
+\tag{2.6}
+\]
+
+<p>termo conhecido por excesso de cor.</p>
+
+<p>Também podemos definir um índice de avermelhamento como</p>
+
+\[
+A_V = R\,E(B-V)\,.
+\tag{2.7}
+\]
+
+<p>O valor de \(R\) é obtido empiricamente e varia entre 3 e 5 dependendo da
+direção da Galáxia.</p>
+
+<p>Temos que, na presença de um meio interestelar,</p>
+
+\[
+m_\lambda^{i} = m_\lambda^{\mathrm{obs}} - A_\lambda\,,
+\tag{2.8}
+\]
+
+<p>onde \(m_\lambda^{i}\) é a magnitude intrínseca, \(m_\lambda^{\mathrm{obs}}\) é
+a magnitude observada e \(A_\lambda>0\) é a extinção.</p>
+
+<div class="caixa atencao">
+  <div class="rotulo">Observação — O valor de R_V e a lei de extinção</div>
+  <div class="conteudo">
+    <p>O valor \(R\approx 3{,}1\) é o mais comumente adotado para o meio
+    interestelar difuso da Galáxia, mas ele pode chegar a \(\sim 5\) em regiões
+    de nuvens moleculares densas, onde os grãos de poeira tendem a ser maiores.
+    A dependência completa da extinção com o comprimento de onda (a
+    <em>lei de extinção</em>) é mais complexa do que uma simples razão constante,
+    sendo tabelada e parametrizada em função de \(R_V\) por
+    Fitzpatrick (1999).</p>
+  </div>
+</div>
+
+<h2>Módulo interativo 3 — Diagrama cor-magnitude simplificado</h2>
+
+<div class="modulo">
+  <div class="rotulo">Efeito de avermelhamento e extinção sobre um conjunto de estrelas hipotéticas</div>
+  <div class="corpo">
+    <div class="controles">
+      <div class="controle">
+        <label for="m3-ebv">Excesso de cor E(B−V) <span class="valor" id="m3-ebv-valor">0,00</span> mag</label>
+        <input type="range" id="m3-ebv" min="0" max="1.5" step="0.01" value="0">
+      </div>
+      <div class="controle">
+        <label for="m3-r">Razão de extinção R <span class="valor" id="m3-r-valor">3,1</span></label>
+        <input type="range" id="m3-r" min="2" max="5.5" step="0.05" value="3.1">
+      </div>
+    </div>
+    <div id="m3-grafico" class="grafico"></div>
+    <div class="saida">
+      Cada ponto se desloca por \(\Delta(B-V) = E(B-V)\) para a direita
+      (avermelhamento) e \(\Delta V = A_V = R\cdot E(B-V)\) para baixo no eixo
+      de magnitude (extinção, que <em>escurece</em> a estrela — magnitude
+      cresce). Sem correção, um observador confundiria essas estrelas com
+      objetos intrinsecamente mais vermelhos e mais distantes/fracos do que
+      realmente são — daí a importância de conhecer \(E(B-V)\) e \(R\) na
+      linha de visada.
+    </div>
+  </div>
+</div>
+
+<h2>Magnitude absoluta e módulo de distância</h2>
+
+<p>As magnitudes aparentes das estrelas, ou de qualquer corpo celeste, são
+uma estimativa ou medida do brilho relativo do corpo para o observador na
+Terra. Esse parâmetro depende do brilho e da distância da fonte, como vimos
+pela Equação (2.3), onde
+\(m_\lambda = -2{,}5\log(F_\lambda) + \text{const}\).</p>
+
+<p>Entretanto, é possível determinar uma expressão absoluta para a magnitude
+estelar, que descreve o seu brilho intrínseco, independente da distância ao
+observador na Terra. Definimos magnitude absoluta como a magnitude teórica
+que a estrela teria se estivesse a 10 pc de nós. Logo,</p>
+
+\[
+M = -2{,}5\,\log_{10}\!\big(F(10\,\mathrm{pc})\big) + \text{const}\,.
+\tag{2.9}
+\]
+
+<p>Assim, a diferença entre a magnitude aparente e a absoluta se expressa como</p>
+
+\[
+\begin{aligned}
+m - M &= \big[-2{,}5\log(F(r)) + \text{const}\big]
+       - \big[-2{,}5\log(F(10\,\mathrm{pc})) + \text{const}\big] \\
+      &= -2{,}5\log(F(r)) + 2{,}5\log(F(10\,\mathrm{pc})) \\
+      &= -2{,}5\,\log_{10}\!\left(\frac{F(r)}{F(10\,\mathrm{pc})}\right).
+\end{aligned}
+\tag{2.10}
+\]
+
+<p>A constante \(K\) (o zero-point fotométrico) é a mesma nas duas magnitudes,
+pois ambas se referem ao mesmo sistema fotométrico — por isso ela se
+cancela na subtração.</p>
+
+<p>O fluxo de radiação é definido como \(F = L/(4\pi R^2)\); logo,</p>
+
+\[
+\begin{aligned}
+m - M &= -2{,}5\,\log_{10}\!\left(\frac{L/4\pi r^2}{L/4\pi (10\,\mathrm{pc})^2}\right)
+       = -2{,}5\,\log_{10}\!\left(\frac{(10\,\mathrm{pc})^2}{r^2}\right) \\
+      &= -2{,}5\,(2 - 2\log_{10} r) \\
+      &= -5 + 5\log_{10} r\,,
+\end{aligned}
+\tag{2.11}
+\]
+
+<p>com \(r\) medido em parsecs. Esta é a equação para a magnitude absoluta,
+também conhecida como <strong>módulo de distância</strong>.</p>
+
+<p>Podemos também escrever a distância em função das magnitudes, onde</p>
+
+\[
+m - M + 5 = 5\log_{10} r
+\quad\Longrightarrow\quad
+\log_{10} r = \frac{m-M+5}{5}\,,
+\]
+
+\[
+\boxed{r = 10^{(m-M+5)/5}}\,.
+\tag{2.12}
+\]
+
+<p>Uma vez que temos a magnitude aparente e a distância, podemos determinar a
+magnitude absoluta.</p>
+
+<h2>Módulo interativo 2 — Módulo de distância</h2>
+
+<div class="modulo">
+  <div class="rotulo">r(pc) = 10^((m − M + 5)/5)</div>
+  <div class="corpo">
+    <div class="controles">
+      <div class="controle">
+        <label for="m2-m">Magnitude aparente m <span class="valor" id="m2-m-valor">6,0</span></label>
+        <input type="range" id="m2-m" min="-2" max="20" step="0.1" value="6">
+      </div>
+      <div class="controle">
+        <label for="m2-M">Magnitude absoluta M <span class="valor" id="m2-M-valor">1,0</span></label>
+        <input type="range" id="m2-M" min="-10" max="15" step="0.1" value="1">
+      </div>
+    </div>
+    <div id="m2-grafico" class="grafico"></div>
+    <div class="saida">
+      Módulo de distância \(m-M=\) <strong id="m2-dist-mod">—</strong>;
+      distância resultante \(r=\) <strong id="m2-r">—</strong> pc.
+      O marcador no gráfico mostra a posição atual sobre a reta
+      \(m-M = -5+5\log_{10}r\) (escala logarítmica no eixo da distância).
+    </div>
+  </div>
+</div>
+
+<div class="caixa exemplo">
+  <div class="rotulo">Exemplo — Sirius, Vega e o Sol: magnitudes reais</div>
+  <div class="conteudo">
+    <table>
+      <thead>
+        <tr><th>Astro</th><th>Tipo espectral</th><th>m<sub>V</sub></th><th>M<sub>V</sub></th><th>B−V</th><th>d</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Sol</td><td>G2V</td><td>−26,74</td><td>+4,83</td><td>+0,65</td><td>1 UA</td></tr>
+        <tr><td>Sirius A</td><td>A1V</td><td>−1,46</td><td>+1,43</td><td>+0,01</td><td>2,64 pc</td></tr>
+        <tr><td>Vega</td><td>A0V</td><td>+0,03</td><td>+0,58</td><td>−0,00</td><td>7,68 pc</td></tr>
+      </tbody>
+    </table>
+    <p>Note que Vega, por definição do sistema de magnitudes
+    (Equação (2.4)), tem magnitude aparente muito próxima de
+    zero — o pequeno desvio (\(+0{,}03\)) decorre de refinamentos do sistema de
+    magnitudes desde a definição original. Sirius, apesar de ser a estrela mais
+    brilhante do céu noturno (\(m_V=-1{,}46\)), é intrinsecamente menos luminosa
+    que Vega (\(M_V=+1{,}43\) contra \(+0{,}58\)); ela nos parece mais brilhante
+    simplesmente por estar muito mais próxima. Usando a
+    Equação (2.12) com os valores de \(m_V\) e \(M_V\) de Sirius,
+    obtém-se \(r=10^{(-1{,}46-1{,}43+5)/5}\approx2{,}64\,\mathrm{pc}\), exatamente
+    o valor medido por paralaxe — uma boa verificação cruzada entre os dois
+    métodos de determinação de distância discutidos neste livro.</p>
+  </div>
+</div>
+
+<h2>Magnitude e correção bolométrica</h2>
+
+<p>A magnitude bolométrica é definida como o fluxo em todos os comprimentos
+de onda, \(m_{\mathrm{bol}}\). Ela é definida como</p>
+
+\[
+L = 4\pi R^2 \int_0^{\infty} F_\nu\,\mathrm{d}\nu = 4\pi R^2 F_{\mathrm{bol}}\,,
+\tag{2.13}
+\]
+
+<p>onde a integral em \(\nu\) cobre <em>todo</em> o espectro eletromagnético —
+do rádio ao raio \(\gamma\), passando pelo infravermelho, óptico e
+ultravioleta —, ao contrário de uma magnitude monocromática \(m_\lambda\),
+que capta apenas a fração do fluxo dentro de uma banda espectral
+específica.</p>
+
+<p>Podemos escrever a diferença entre magnitudes bolométricas como</p>
+
+\[
+m_{1,\mathrm{bol}} - m_{2,\mathrm{bol}}
+= -2{,}5\,\log_{10}\!\left(\frac{L_1/4\pi d_1^2}{L_2/4\pi d_2^2}\right).
+\tag{2.14}
+\]
+
+<p>Assumindo uma distância de 10 pc, temos</p>
+
+\[
+m_{1,\mathrm{bol}} - m_{2,\mathrm{bol}} = -2{,}5\,\log_{10}\!\left(\frac{L_1}{L_2}\right)\,,
+\qquad d_1=d_2\,.
+\tag{2.15}
+\]
+
+<p>Assumindo que a estrela 2 é o nosso Sol, temos</p>
+
+\[
+M_{S,\mathrm{bol}} - M_{\odot,\mathrm{bol}} = -2{,}5\,\log_{10}\!\left(\frac{L}{L_\odot}\right)
+\quad\Longleftrightarrow\quad
+\log_{10}\!\left(\frac{L}{L_\odot}\right) = -0{,}4\,\big(M_{S,\mathrm{bol}} - M_{\odot,\mathrm{bol}}\big)\,.
+\tag{2.16}
+\]
+
+<p>O valor oficial de \(M_{\odot,\mathrm{bol}}\) para o Sol, fixado pela
+Resolução B2 da IAU (2015) — que define \(M_{\mathrm{Bol}}=0\) para uma
+fonte com luminosidade \(L_0=3{,}0128\times10^{28}\,\mathrm{W}\) e é combinada com o
+valor nominal da luminosidade solar da Resolução B3 no mesmo ano,
+\(L_\odot=3{,}828\times10^{26}\,\mathrm{W}\) (Prša et al. 2016) —, é</p>
+
+\[
+M_{\odot,\mathrm{bol}} \approx 4{,}74\,,
+\]
+
+<p>segundo Mamajek et al. (2015); logo, a magnitude bolométrica de uma estrela
+pode ser representada por</p>
+
+\[
+\boxed{M_{\mathrm{bol}} = 4{,}74 - 2{,}5\,\log_{10}\!\left(\frac{L}{L_\odot}\right)}\,.
+\tag{2.17}
+\]
+
+<div class="caixa atencao">
+  <div class="rotulo">Observação — O valor tradicional M⊙,bol = 4,72</div>
+  <div class="conteudo">
+    <p>Em textos e artigos publicados antes de 2015, e ainda hoje em algumas
+    referências, é comum encontrar \(M_{\odot,\mathrm{bol}}=4{,}72\) — um valor
+    que varia entre \(4{,}72\) e \(4{,}75\) conforme a referência, o valor de
+    \(L_\odot\) e o zero-point fotométrico assumidos antes da padronização
+    oficial. A diferença de \(\sim0{,}02\) mag entre \(4{,}72\) e o valor oficial
+    \(4{,}74\) é pequena e não afeta as conclusões qualitativas deste curso,
+    mas é importante estar ciente da convenção adotada ao comparar resultados
+    com trabalhos publicados antes de 2015.</p>
+  </div>
+</div>
+
+<p>Na prática, é muito difícil medir a magnitude bolométrica de um astro
+porque alguns comprimentos de onda são absorvidos pela atmosfera terrestre.
+Uma alternativa é determiná-la a partir de uma magnitude absoluta em uma
+única banda, \(M_\lambda\) (tipicamente a banda \(V\)), onde</p>
+
+\[
+M_{\mathrm{bol}} = M_\lambda - CB\,,
+\tag{2.18}
+\]
+
+<p>sendo \(CB\) um fator de correção bolométrica que varia para cada classe
+estelar — como a magnitude bolométrica soma o fluxo de <em>todo</em> o
+espectro, enquanto \(M_\lambda\) capta apenas uma banda, \(CB\) é, nesta
+convenção, uma grandeza sempre positiva ou nula, e cresce tanto para
+estrelas muito quentes quanto para estrelas muito frias (cujo pico
+espectral, pela lei de Wien discutida na próxima seção, cai cada vez mais
+longe da banda \(\lambda\) escolhida).</p>
+
+<div class="caixa atencao">
+  <div class="rotulo">Observação — Convenção de sinal da correção bolométrica</div>
+  <div class="conteudo">
+    <p>A literatura moderna mais frequentemente define a <strong>correção
+    bolométrica</strong> com o sinal oposto ao usado aqui, \(BC\equiv M_{\mathrm{bol}}
+    -M_V=-CB\), de modo que \(BC\le0\) <em>sempre</em> (nenhuma banda isolada pode
+    captar mais fluxo que o espectro inteiro) — o Sol, por exemplo, tem
+    \(BC_V\approx-0{,}08\). As duas convenções carregam exatamente a mesma
+    informação física, apenas com o sinal trocado; a diferença importa na
+    prática ao comparar valores de correção bolométrica com tabelas ou
+    artigos publicados, que quase sempre reportam \(BC\le0\)
+    (Carroll &amp; Ostlie 2017; Kippenhahn et al. 2012).</p>
+  </div>
+</div>
+
+<h2>Módulo interativo — Correção bolométrica e M<sub>bol</sub></h2>
+
+<p>A tabela empírica de Pecaut &amp; Mamajek (2013), com atualizações mantidas
+publicamente pelo autor, fornece \(BC_V\) tabelado em função da temperatura
+efetiva para estrelas de sequência principal, dos tipos O aos M. O módulo
+abaixo interpola essa tabela para deixar concreto por que a correção
+bolométrica não é uma constante pequena: ela só se aproxima de zero numa
+faixa estreita em torno dos tipos A tardio–F inicial (o mínimo em módulo
+ocorre perto de \(T_{\mathrm{eff}}\approx 8000\,\mathrm{K}\), não exatamente
+no tipo solar G), e cresce rapidamente tanto para estrelas mais quentes
+(que emitem grande parte do fluxo no ultravioleta, fora da banda \(V\))
+quanto para as mais frias (que emitem principalmente no infravermelho).</p>
+
+<div class="modulo">
+  <div class="rotulo">Módulo interativo — Correção bolométrica e M_bol</div>
+  <div class="corpo">
+    <div class="controles">
+      <div class="controle">
+        <label for="m5-teff">Temperatura efetiva T<sub>eff</sub> <span class="valor" id="m5-teff-valor">5772 K</span></label>
+        <input type="range" id="m5-teff" min="3.415" max="4.623" step="0.001" value="3.7613">
+      </div>
+      <div class="controle">
+        <label for="m5-mv">Magnitude absoluta M<sub>V</sub> <span class="valor" id="m5-mv-valor">4,83</span></label>
+        <input type="range" id="m5-mv" min="-8" max="15" step="0.01" value="4.83">
+      </div>
+    </div>
+    <div id="m5-grafico" class="grafico"></div>
+    <div class="saida">
+      Em \(T_{\mathrm{eff}}=\)<strong id="m5-teff-saida">5772</strong> K:
+      \(BC_V=\)<strong id="m5-bc">−0,085</strong> mag (interpolado da tabela de
+      Pecaut &amp; Mamajek 2013) →
+      \(M_{\mathrm{bol}} = M_V + BC_V = \)<strong id="m5-mbol">4,75</strong>.
+      Compare com \(M_{\odot,\mathrm{bol}}=4{,}74\) (valor oficial IAU) usando
+      \(M_{V,\odot}\approx4{,}83\): o \(BC_{V,\odot}\approx-0{,}09\) tabelado
+      aqui bate, dentro do arredondamento, com o \(-0{,}08\) citado na caixa
+      acima.
+    </div>
+  </div>
+</div>
+
+<h2>Radiação de corpo negro</h2>
+
+<p>Um corpo negro é definido como sendo um corpo que absorve e emite toda a
+radiação que é incidida sobre ele. Não existem corpos negros ideais na
+natureza; no entanto, estrelas são os corpos que mais se aproximam desta
+característica.</p>
+
+<p>Em 1893, o alemão Wilhelm Wien descobriu empiricamente que o pico de
+radiação de um corpo é proporcional a uma constante vezes a temperatura da
+radiação, onde:</p>
+
+<h3>Lei de Deslocamento de Wien e função de Planck</h3>
+
+<p>A observação empírica de Wien, feita ainda antes da formulação completa da
+radiação de corpo negro, é hoje conhecida como <strong>Lei de Deslocamento
+de Wien</strong>:</p>
+
+\[
+\boxed{\lambda_{\max}\,T = b}\,, \qquad
+b = 2{,}898\times10^{-3}\,\mathrm{m\,K}\,,
+\tag{2.19}
+\]
+
+<p>onde \(\lambda_{\max}\) é o comprimento de onda de pico da radiação e \(T\) é a
+temperatura do corpo. A relação foi obtida por Wien de forma puramente
+empírica em 1893 — sete anos antes de Max Planck derivar, em 1900, a
+distribuição espectral completa da radiação de corpo negro, da qual a lei
+de Wien pode ser deduzida como caso particular.</p>
+
+<p>A função de Planck, que descreve a radiância espectral de um corpo negro
+em função do comprimento de onda, é dada por</p>
+
+\[
+B_\lambda(T) = \frac{2hc^2}{\lambda^5}\,
+\frac{1}{\exp\!\left(\dfrac{hc}{\lambda k_B T}\right) - 1}\,,
+\tag{2.20}
+\]
+
+<p>ou, em função da frequência,</p>
+
+\[
+B_\nu(T) = \frac{2h\nu^3}{c^2}\,
+\frac{1}{\exp\!\left(\dfrac{h\nu}{k_B T}\right) - 1}\,,
+\tag{2.21}
+\]
+
+<p>onde \(h=6{,}626\times10^{-34}\,\mathrm{J\,s}\) é a constante de Planck,
+\(c=2{,}998\times10^{8}\,\mathrm{m/s}\) é a velocidade da luz no vácuo, e
+\(k_B=1{,}381\times10^{-23}\,\mathrm{J/K}\) é a constante de Boltzmann. O papel
+físico de cada constante é direto: \(h\) quantiza a energia da radiação em
+pacotes \(E=h\nu\), \(k_B\) conecta essa energia à escala de energia térmica
+\(k_BT\) do corpo emissor, e \(c\) converte entre as descrições em frequência e
+em comprimento de onda.</p>
+
+<p>A lei de Wien é obtida diretamente da função de Planck, procurando o ponto
+de máximo de \(B_\lambda(T)\) para uma temperatura fixa, isto é, resolvendo
+\(\mathrm{d}B_\lambda/\mathrm{d}\lambda=0\). Definindo a variável adimensional
+\(x \equiv hc/(\lambda k_B T)\), de modo que
+\(B_\lambda \propto x^5/(e^x-1)\), a condição de máximo se reduz à equação
+transcendental</p>
+
+\[
+(5-x)\,e^{x} = 5\,,
+\tag{2.22}
+\]
+
+<p>cuja solução numérica é \(x\approx 4{,}9651\). Como \(\lambda_{\max} =
+hc/(x\,k_B T)\), segue que</p>
+
+\[
+\lambda_{\max}\,T = \frac{hc}{k_B\,x} \equiv b
+= 2{,}898\times10^{-3}\,\mathrm{m\,K}\,,
+\tag{2.23}
+\]
+
+<p>recuperando exatamente a Equação (2.19).</p>
+
+<p>A Lei de Deslocamento de Wien também pode ser escrita em função da
+frequência de pico \(\nu_{\max}\), forma complementar à
+Equação (2.19) e igualmente útil em astrofísica:</p>
+
+\[
+\boxed{h\,\nu_{\max} = 2{,}821\,k_B T}\,,
+\tag{2.24}
+\]
+
+<p>onde \(h\) é a constante de Planck, \(\nu_{\max}\) é a frequência de pico da
+radiação, \(k_B\) é a constante de Boltzmann e \(T\) é a temperatura do corpo.</p>
+
+<p>Essa forma é obtida de maneira inteiramente análoga à anterior, mas
+maximizando \(B_\nu(T)\) em vez de \(B_\lambda(T)\). Definindo agora
+\(x \equiv h\nu/(k_B T)\), de modo que \(B_\nu \propto x^3/(e^x-1)\), a condição
+\(\mathrm{d}B_\nu/\mathrm{d}\nu=0\) se reduz à equação transcendental</p>
+
+\[
+(3-x)\,e^{x} = 3
+\quad\Longleftrightarrow\quad
+\frac{x\,e^x}{e^x-1} = 3\,,
+\tag{2.25}
+\]
+
+<p>cuja solução numérica é \(x\approx 2{,}8214\) — o valor \(2{,}821\) das notas.
+Como \(\nu_{\max} = x\,k_B T/h\), segue diretamente a
+Equação (2.24).</p>
+
+<div class="caixa atencao">
+  <div class="rotulo">Observação — λ_max e ν_max não são o mesmo ponto do espectro</div>
+  <div class="conteudo">
+    <p>Um erro comum é supor que \(\nu_{\max} = c/\lambda_{\max}\), isto é, que o
+    pico de \(B_\nu\) corresponde ao mesmo ponto físico do espectro que o pico de
+    \(B_\lambda\). Isso é <strong>falso</strong>. \(B_\lambda\) e \(B_\nu\) são densidades
+    espectrais diferentes — a relação entre elas envolve o fator jacobiano da
+    mudança de variável, \(B_\nu\,|\mathrm{d}\nu| = B_\lambda\,|\mathrm{d}\lambda|\),
+    ou seja \(B_\nu = B_\lambda\,(c/\nu^2)\) — e maximizar uma não é equivalente a
+    maximizar a outra. Numericamente, a Equação (2.19) dá
+    \(\lambda_{\max}T = hc/(4{,}9651\,k_B) = 2{,}898\times10^{-3}\,\mathrm{m\,K}\),
+    enquanto o comprimento de onda correspondente a \(\nu_{\max}\) seria
+    \((c/\nu_{\max})\,T = hc/(2{,}8214\,k_B) \approx 5{,}10\times10^{-3}\,\mathrm{m\,K}\)
+    — quase o dobro. Ou seja, o pico em frequência do espectro corresponde a um
+    comprimento de onda bem mais longo do que o pico real em comprimento de
+    onda, \(\lambda_{\max}\). Ao citar "o comprimento de onda de pico", é
+    essencial deixar claro qual das duas formas de Wien (Equação
+    (2.19) ou (2.24)) foi usada.</p>
+  </div>
+</div>
+
+<div class="caixa contexto">
+  <div class="rotulo">Contexto astrofísico — Conexão com a temperatura efetiva estelar</div>
+  <div class="conteudo">
+    <p>Como as estrelas se comportam, em boa aproximação, como corpos negros
+    (conforme já discutido nas notas), o pico do espectro contínuo estelar
+    observado fornece uma estimativa direta da temperatura efetiva \(T_{\mathrm{eff}}\) da
+    estrela, através da Lei de Deslocamento de Wien. Esse deslocamento do pico
+    espectral — de comprimentos de onda longos (vermelho/infravermelho), em
+    estrelas frias, para comprimentos de onda curtos (azul/ultravioleta), em
+    estrelas quentes — é a base física por trás da relação entre cor e
+    temperatura discutida na <a href="#cores">Seção "Cores estelares"</a> (o índice \(B-V\)), e
+    complementa métodos espectroscópicos mais refinados de determinação de
+    \(T_{\mathrm{eff}}\), baseados no ajuste de linhas de absorção e do contínuo estelar.</p>
+  </div>
+</div>
+
+<h2 id="modulo-wien-planck">Módulo interativo 4 — Lei de Wien e a curva de Planck</h2>
+
+<div class="modulo">
+  <div class="rotulo">B_λ(T): pico se deslocando com a temperatura</div>
+  <div class="corpo">
+    <div class="controles">
+      <div class="controle">
+        <label for="m4-T">Temperatura T <span class="valor" id="m4-T-valor">5772 K</span></label>
+        <input type="range" id="m4-T" min="2000" max="40000" step="10" value="5772">
+      </div>
+    </div>
+    <div id="m4-grafico" class="grafico"></div>
+    <div class="saida">
+      \(\lambda_{\max}=\) <strong id="m4-lambda">—</strong> nm
+      (Lei de Wien, Eq. 2.19) ·
+      \(h\nu_{\max}=2{,}821\,k_BT=\) <strong id="m4-hnu">—</strong> eV
+      (Eq. 2.24). Compare: Sol (5772 K, pico no visível),
+      estrela O quente (~35000 K, pico no UV), anã M fria (~3200 K, pico no IV
+      próximo).
+    </div>
+  </div>
+</div>
+
+<div class="caixa exemplo">
+  <div class="rotulo">Exemplo — O pico espectral em diferentes tipos de estrela</div>
+  <div class="conteudo">
+    <p>Aplicando a Lei de Deslocamento de Wien (Equação (2.19)) a
+    três estrelas de temperaturas efetivas bem distintas:</p>
+    <ul>
+      <li><strong>Sol</strong> (\(T_{\mathrm{eff}} \approx 5772\,\mathrm{K}\), valor nominal
+      adotado pela IAU, Prša et al. 2016):
+      \[
+      \lambda_{\max} = \frac{b}{T_{\mathrm{eff}}} = \frac{2{,}898\times10^{-3}}{5772}
+      \approx 502\,\mathrm{nm}\,,
+      \]
+      bem no meio da faixa visível — não é coincidência que a visão humana tenha
+      evoluído com sensibilidade máxima próxima desse comprimento de onda.</li>
+      <li><strong>Estrela O quente</strong> (\(T_{\mathrm{eff}} \approx 35000\,\mathrm{K}\)):
+      \[
+      \lambda_{\max} \approx \frac{2{,}898\times10^{-3}}{35000}
+      \approx 82{,}8\,\mathrm{nm}\,,
+      \]
+      no ultravioleta extremo, muito além do que a atmosfera terrestre permite
+      observar do solo — daí a importância de telescópios espaciais para
+      caracterizar estrelas muito quentes.</li>
+      <li><strong>Anã M fria</strong> (\(T_{\mathrm{eff}} \approx 3200\,\mathrm{K}\)):
+      \[
+      \lambda_{\max} \approx \frac{2{,}898\times10^{-3}}{3200}
+      \approx 906\,\mathrm{nm}\,,
+      \]
+      já no infravermelho próximo, consistente com a cor avermelhada
+      característica dessas estrelas.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="caixa leitura">
+  <div class="rotulo">Leituras complementares e referências atuais — Determinação moderna de T_eff estelar</div>
+  <div class="conteudo">
+    <p>Levantamentos espectrofotométricos em larga escala permitem hoje estimar
+    \(T_{\mathrm{eff}}\) para centenas de milhões de estrelas simultaneamente. A missão
+    <em>Gaia</em>, através do módulo <em>Apsis</em>, deriva temperaturas efetivas,
+    gravidades superficiais e metalicidades a partir dos espectros de baixa
+    resolução (\(BP\)/\(RP\)) e da fotometria de mais de 470 milhões de fontes
+    (Fouesneau et al. 2023). Esses métodos combinam o ajuste da forma global do
+    espectro observado — em espírito muito próximo do deslocamento de Wien
+    discutido aqui, ainda que empregando modelos de atmosfera completos — com
+    comparações estatísticas a grandes bibliotecas espectrais, alcançando
+    precisões da ordem de centenas de kelvin mesmo em regiões de alta extinção
+    interestelar.</p>
+  </div>
+</div>
+
+</div>
+
+<footer class="rodape">
+  Estrutura e Evolução Estelar — Notas de Aula, Programa de Pós-Graduação em
+  Física, Universidade Federal de Sergipe (UFS). Módulo HTML interativo
+  gerado como complemento ao texto em LaTeX/PDF do Capítulo 2.
+</footer>
+
+<script>
+(function () {
+  var PLOTLY_CONFIG = { responsive: true, displaylogo: false, displayModeBar: false };
+
+  // ---------- Módulo 1: relação de Pogson ----------
+  var razaoSlider = document.getElementById('m1-razao'); // log10(F1/F2), de -3 a 3
+  var razaoValor = document.getElementById('m1-razao-valor');
+  var dmSpan = document.getElementById('m1-dm');
+  var m1Div = document.getElementById('m1-grafico');
+  m1Div.style.height = '320px'; // altura fixa: evita que o container cresça a partir do próprio conteúdo
+
+  function formataRazao(r) {
+    if (r >= 1) return r.toPrecision(3).replace(/\.?0+$/, '').replace('.', ',');
+    return r.toPrecision(3).replace('.', ',');
+  }
+
+  function desenhaPogson(logRazao) {
+    var razao = Math.pow(10, logRazao);
+    var dm = -2.5 * Math.log10(razao);
+
+    var n = 200;
+    var xs = [];
+    var ys = [];
+    for (var i = 0; i <= n; i++) {
+      var lr = -3 + (6 * i) / n;
+      xs.push(Math.pow(10, lr));
+      ys.push(-2.5 * lr);
+    }
+
+    var curva = { x: xs, y: ys, mode: 'lines', name: 'm₁−m₂', line: { color: '#0d6e6e', width: 2.5 } };
+    var marcador = { x: [razao], y: [dm], mode: 'markers', name: 'atual', marker: { size: 12, color: '#963c1e' } };
+
+    var layout = {
+      height: 320,
+      margin: { l: 55, r: 20, t: 10, b: 45 },
+      xaxis: { title: 'F₁ / F₂', type: 'log' },
+      yaxis: { title: 'm₁ − m₂' },
+      showlegend: false
+    };
+
+    Plotly.react(m1Div, [curva, marcador], layout, PLOTLY_CONFIG);
+
+    razaoValor.textContent = formataRazao(razao);
+    dmSpan.textContent = dm.toFixed(2).replace('.', ',').replace('-', '−');
+  }
+
+  razaoSlider.addEventListener('input', function () { desenhaPogson(Number(razaoSlider.value)); });
+  desenhaPogson(Number(razaoSlider.value));
+
+  // ---------- Módulo 2: módulo de distância ----------
+  var mSlider = document.getElementById('m2-m');
+  var MSlider = document.getElementById('m2-M');
+  var mValor = document.getElementById('m2-m-valor');
+  var MValor = document.getElementById('m2-M-valor');
+  var distModSpan = document.getElementById('m2-dist-mod');
+  var rSpan = document.getElementById('m2-r');
+  var m2Div = document.getElementById('m2-grafico');
+  m2Div.style.height = '320px';
+
+  function desenhaModuloDistancia() {
+    var m = Number(mSlider.value);
+    var M = Number(MSlider.value);
+    var distMod = m - M;
+    var r = Math.pow(10, (distMod + 5) / 5);
+
+    var n = 150;
+    var xs = [];
+    var ys = [];
+    for (var i = 0; i <= n; i++) {
+      var logr = -1 + (7 * i) / n; // r de 0.1 a 1e6 pc
+      var rr = Math.pow(10, logr);
+      xs.push(rr);
+      ys.push(-5 + 5 * Math.log10(rr));
+    }
+
+    var curva = { x: xs, y: ys, mode: 'lines', name: 'm−M', line: { color: '#0d6e6e', width: 2.5 } };
+    var marcador = { x: [r], y: [distMod], mode: 'markers', name: 'atual', marker: { size: 12, color: '#963c1e' } };
+
+    var layout = {
+      height: 320,
+      margin: { l: 55, r: 20, t: 10, b: 45 },
+      xaxis: { title: 'distância r (pc)', type: 'log' },
+      yaxis: { title: 'm − M' },
+      showlegend: false
+    };
+
+    Plotly.react(m2Div, [curva, marcador], layout, PLOTLY_CONFIG);
+
+    mValor.textContent = m.toFixed(1).replace('.', ',');
+    MValor.textContent = M.toFixed(1).replace('.', ',');
+    distModSpan.textContent = distMod.toFixed(2).replace('.', ',');
+    rSpan.textContent = r < 1000 ? r.toFixed(2).replace('.', ',') : r.toExponential(2);
+  }
+
+  mSlider.addEventListener('input', desenhaModuloDistancia);
+  MSlider.addEventListener('input', desenhaModuloDistancia);
+  desenhaModuloDistancia();
+
+  // ---------- Módulo 3: diagrama cor-magnitude ----------
+  var ebvSlider = document.getElementById('m3-ebv');
+  var rSliderCM = document.getElementById('m3-r');
+  var ebvValor = document.getElementById('m3-ebv-valor');
+  var rValorCM = document.getElementById('m3-r-valor');
+  var m3Div = document.getElementById('m3-grafico');
+  m3Div.style.height = '380px';
+
+  // Conjunto fixo de estrelas hipotéticas: (B-V)_0 intrínseco e V_0 intrínseca
+  var estrelasBase = [
+    { nome: 'O quente', bv0: -0.30, v0: 2.0 },
+    { nome: 'A', bv0: 0.05, v0: 3.5 },
+    { nome: 'F/G (tipo solar)', bv0: 0.65, v0: 5.0 },
+    { nome: 'K', bv0: 1.00, v0: 6.5 },
+    { nome: 'M fria', bv0: 1.50, v0: 8.5 }
+  ];
+
+  function desenhaCorMagnitude() {
+    var ebv = Number(ebvSlider.value);
+    var Rv = Number(rSliderCM.value);
+    var av = Rv * ebv;
+
+    var bv0 = estrelasBase.map(function (e) { return e.bv0; });
+    var v0 = estrelasBase.map(function (e) { return e.v0; });
+    var bvObs = estrelasBase.map(function (e) { return e.bv0 + ebv; });
+    var vObs = estrelasBase.map(function (e) { return e.v0 + av; });
+    var nomes = estrelasBase.map(function (e) { return e.nome; });
+
+    var traceIntr = {
+      x: bv0, y: v0, mode: 'markers+text', name: 'intrínseca (sem poeira)',
+      text: nomes, textposition: 'top center',
+      marker: { size: 11, color: '#0d6e6e', symbol: 'circle' }
+    };
+    var traceObs = {
+      x: bvObs, y: vObs, mode: 'markers', name: 'observada (avermelhada + extinta)',
+      marker: { size: 11, color: '#963c1e', symbol: 'diamond' }
+    };
+
+    var setas = [];
+    for (var i = 0; i < estrelasBase.length; i++) {
+      setas.push({
+        x: bv0[i], y: v0[i], ax: bvObs[i], ay: vObs[i],
+        xref: 'x', yref: 'y', axref: 'x', ayref: 'y',
+        showarrow: true, arrowhead: 2, arrowsize: 1, arrowwidth: 1, arrowcolor: '#bbb'
+      });
+    }
+
+    var layout = {
+      height: 380,
+      margin: { l: 55, r: 20, t: 10, b: 45 },
+      xaxis: { title: 'B − V (mag)' },
+      yaxis: { title: 'V (mag)', autorange: 'reversed' },
+      legend: { orientation: 'h', y: -0.25 },
+      annotations: setas
+    };
+
+    Plotly.react(m3Div, [traceIntr, traceObs], layout, PLOTLY_CONFIG);
+
+    ebvValor.textContent = ebv.toFixed(2).replace('.', ',');
+    rValorCM.textContent = Rv.toFixed(2).replace('.', ',');
+  }
+
+  ebvSlider.addEventListener('input', desenhaCorMagnitude);
+  rSliderCM.addEventListener('input', desenhaCorMagnitude);
+  desenhaCorMagnitude();
+
+  // ---------- Módulo BC: correção bolométrica vs. T_eff ----------
+  // Tabela BC_V(T_eff) para estrelas de sequência principal (O a M),
+  // extraída de Pecaut & Mamajek (2013, ApJS 208, 9), tabela mantida e
+  // atualizada por Eric Mamajek em pas.rochester.edu/~emamajek — valores
+  // lidos diretamente de EEM_dwarf_UBVIJHK_colors_Teff.txt (versão 2022.04.16).
+  var tabelaBC = [
+    [2810, -4.13], [3210, -2.51], [3560, -1.62], [3850, -1.15],
+    [4100, -0.93], [4440, -0.63], [4830, -0.375], [5270, -0.195],
+    [5480, -0.14], [5660, -0.105], [5770, -0.085], [5930, -0.065],
+    [6180, -0.04], [6550, -0.02], [7220, 0.01], [8100, 0.00],
+    [8600, -0.04], [9700, -0.21], [10700, -0.42], [12300, -0.73],
+    [14500, -1.13], [17000, -1.54], [20600, -2.03], [24500, -2.44],
+    [29000, -2.83], [33300, -3.11], [35100, -3.24], [37100, -3.41],
+    [41400, -3.76]
+  ];
+
+  function bcInterpolado(T) {
+    var Tmin = tabelaBC[0][0], Tmax = tabelaBC[tabelaBC.length - 1][0];
+    T = Math.max(Tmin, Math.min(Tmax, T));
+    for (var i = 0; i < tabelaBC.length - 1; i++) {
+      var t0 = tabelaBC[i][0], t1 = tabelaBC[i + 1][0];
+      if (T >= t0 && T <= t1) {
+        var f = (T - t0) / (t1 - t0);
+        return tabelaBC[i][1] + f * (tabelaBC[i + 1][1] - tabelaBC[i][1]);
+      }
+    }
+    return tabelaBC[tabelaBC.length - 1][1];
+  }
+
+  var m5TeffSlider = document.getElementById('m5-teff');
+  var m5MvSlider = document.getElementById('m5-mv');
+  var m5TeffValor = document.getElementById('m5-teff-valor');
+  var m5MvValor = document.getElementById('m5-mv-valor');
+  var m5TeffSaida = document.getElementById('m5-teff-saida');
+  var m5BcSpan = document.getElementById('m5-bc');
+  var m5MbolSpan = document.getElementById('m5-mbol');
+  var m5Div = document.getElementById('m5-grafico');
+  m5Div.style.height = '340px';
+
+  var referenciasBC = [
+    { nome: 'Sol (G2V)', T: 5772 },
+    { nome: 'estrela O quente', T: 35000 },
+    { nome: 'anã M fria', T: 3200 }
+  ];
+
+  function desenhaBC() {
+    var T = Math.pow(10, Number(m5TeffSlider.value));
+    var Mv = Number(m5MvSlider.value);
+    var bc = bcInterpolado(T);
+    var mbol = Mv + bc;
+
+    var xsCurva = tabelaBC.map(function (p) { return p[0]; });
+    var ysCurva = tabelaBC.map(function (p) { return p[1]; });
+    var curva = { x: xsCurva, y: ysCurva, mode: 'lines', name: 'BC_V(T_eff)', line: { color: '#963c1e', width: 2.5 } };
+
+    var xsRef = referenciasBC.map(function (r) { return r.T; });
+    var ysRef = referenciasBC.map(function (r) { return bcInterpolado(r.T); });
+    var nomesRef = referenciasBC.map(function (r) { return r.nome; });
+    var traceRef = {
+      x: xsRef, y: ysRef, mode: 'markers+text', name: 'referências',
+      text: nomesRef, textposition: 'top center',
+      marker: { size: 9, color: '#5a3c82', symbol: 'diamond' }
+    };
+
+    var marcador = { x: [T], y: [bc], mode: 'markers', name: 'atual', marker: { size: 12, color: '#0d6e6e' } };
+
+    var layout = {
+      height: 340,
+      margin: { l: 55, r: 20, t: 10, b: 45 },
+      xaxis: { title: 'T_eff (K)', type: 'log' },
+      yaxis: { title: 'BC_V (mag)' },
+      showlegend: false
+    };
+
+    Plotly.react(m5Div, [curva, traceRef, marcador], layout, PLOTLY_CONFIG);
+
+    m5TeffValor.textContent = Math.round(T) + ' K';
+    m5MvValor.textContent = Mv.toFixed(2).replace('.', ',');
+    m5TeffSaida.textContent = Math.round(T);
+    m5BcSpan.textContent = bc.toFixed(3).replace('.', ',').replace('-', '−');
+    m5MbolSpan.textContent = mbol.toFixed(2).replace('.', ',');
+  }
+
+  m5TeffSlider.addEventListener('input', desenhaBC);
+  m5MvSlider.addEventListener('input', desenhaBC);
+  desenhaBC();
+
+  // ---------- Módulo 4: lei de Wien / curva de Planck ----------
+  var TSlider = document.getElementById('m4-T');
+  var TValor = document.getElementById('m4-T-valor');
+  var lambdaSpan = document.getElementById('m4-lambda');
+  var hnuSpan = document.getElementById('m4-hnu');
+  var m4Div = document.getElementById('m4-grafico');
+  m4Div.style.height = '340px';
+
+  var h = 6.626e-34, c = 2.998e8, kB = 1.381e-23;
+  var b = 2.898e-3;
+  var eV = 1.602e-19;
+
+  function planckLambda(lambda_m, T) {
+    var x = (h * c) / (lambda_m * kB * T);
+    if (x > 700) return 0; // evita overflow no exp
+    return (2 * h * c * c) / Math.pow(lambda_m, 5) / (Math.exp(x) - 1);
+  }
+
+  function desenhaWien() {
+    var T = Number(TSlider.value);
+    var lambdaMax_nm = (b / T) * 1e9;
+
+    var lambdaPlotMax_nm = Math.max(3000, lambdaMax_nm * 4);
+    var n = 300;
+    var xs = [];
+    var ys = [];
+    var picoY = planckLambda(lambdaMax_nm * 1e-9, T);
+    for (var i = 1; i <= n; i++) {
+      var lam_nm = (lambdaPlotMax_nm * i) / n;
+      xs.push(lam_nm);
+      ys.push(planckLambda(lam_nm * 1e-9, T) / picoY); // normalizado ao pico
+    }
+
+    var curva = { x: xs, y: ys, mode: 'lines', name: 'B_λ(T) normalizado', line: { color: '#963c1e', width: 2.5 } };
+    var marcador = { x: [lambdaMax_nm], y: [1], mode: 'markers', name: 'λ_max', marker: { size: 10, color: '#0d6e6e' } };
+
+    // faixa visível aproximada, para referência visual
+    var faixaVisivel = {
+      type: 'rect', xref: 'x', yref: 'paper',
+      x0: 380, x1: 750, y0: 0, y1: 1,
+      fillcolor: 'rgba(150,150,150,0.12)', line: { width: 0 }
+    };
+
+    var layout = {
+      height: 340,
+      margin: { l: 55, r: 20, t: 10, b: 45 },
+      xaxis: { title: 'λ (nm)', range: [0, lambdaPlotMax_nm] },
+      yaxis: { title: 'B_λ(T) (normalizado ao pico)' },
+      shapes: [faixaVisivel],
+      showlegend: false
+    };
+
+    Plotly.react(m4Div, [curva, marcador], layout, PLOTLY_CONFIG);
+
+    var hnuMax_eV = (2.821 * kB * T) / eV;
+
+    TValor.textContent = T + ' K';
+    lambdaSpan.textContent = lambdaMax_nm.toFixed(1).replace('.', ',');
+    hnuSpan.textContent = hnuMax_eV.toFixed(3).replace('.', ',');
+  }
+
+  TSlider.addEventListener('input', desenhaWien);
+  desenhaWien();
+
+  // Reforço além de responsive:true: garante o reajuste de largura em
+  // navegadores/casos onde o ResizeObserver interno do Plotly não dispara
+  // (ex. redimensionamento da janela do sistema operacional).
+  window.addEventListener('resize', function () {
+    [m1Div, m2Div, m3Div, m4Div, m5Div].forEach(function (div) {
+      if (div) Plotly.Plots.resize(div);
+    });
+  });
+})();
+</script>

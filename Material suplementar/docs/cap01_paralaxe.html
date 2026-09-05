@@ -1,0 +1,454 @@
+<meta charset="utf-8">
+<title>Distância por Paralaxe</title>
+<meta name="description" content="Módulo interativo do Capítulo 1: geometria da paralaxe, aproximação de pequenos ângulos e definição do parsec.">
+<link rel="stylesheet" href="assets/estilo.css">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['\\(', '\\)'], ['$', '$']],
+    displayMath: [['\\[', '\\]'], ['$$', '$$']],
+    macros: { sen: '\\operatorname{sen}' }
+  },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.0/plotly.min.js"></script>
+
+<div class="topo">
+  <div class="miolo">
+    <a href="index.html">&larr; Índice do livro</a>
+    <span class="sep">·</span>
+    <span class="titulo-livro">Estrutura e Evolução Estelar — Notas de Aula (UFS)</span>
+    <span class="sep">·</span>
+    <!-- TODO: confirmar URL do GitHub Pages / repositório -->
+    <a href="#" title="TODO: confirmar link do repositório no GitHub">Repositório no GitHub</a>
+  </div>
+</div>
+
+<div class="pagina">
+
+<h1>Capítulo 1 — Distância por Paralaxe</h1>
+<p class="subtitulo">Transcrição fiel das notas de aula, com módulos interativos de exploração.</p>
+
+<p>A distância de um astro é uma das mais importantes grandezas físicas
+astronômicas. A forma mais fácil de se obter a distância de um corpo
+astronômico de forma direta é por meio da <strong>paralaxe</strong>. O método
+consiste em observar um objeto — uma estrela, por exemplo — a partir de
+dois pontos diferentes. Como os astrônomos, a princípio, sabiam que a Terra
+gira ao redor do Sol em uma órbita quase circular, seria possível observar
+um astro pelo menos duas vezes em um período de seis meses, de modo que a
+Terra estaria do lado oposto em relação à primeira medida.</p>
+
+<h2>Módulo interativo 1 — Geometria da paralaxe</h2>
+
+<p>Uma vez que se conheça a distância do Sol até a Terra, é possível usar
+trigonometria simples para determinar a distância entre o astro e a Terra
+(ou, de forma equivalente e mais usual, entre o astro e o Sol), de modo que:</p>
+
+\[
+\tan\alpha = \frac{1\,\mathrm{UA}}{d}
+\quad\Longrightarrow\quad
+d = \frac{1\,\mathrm{UA}}{\tan\alpha}.
+\tag{1.1}
+\]
+
+<div class="modulo">
+  <div class="rotulo">Diagrama Sol–Terra–estrela: ajuste a distância</div>
+  <div class="corpo">
+    <div class="controles">
+      <div class="controle">
+        <label for="p1-dist">Distância da estrela <span class="valor" id="p1-dist-valor">50 pc</span></label>
+        <input type="range" id="p1-dist" min="1" max="1000" step="1" value="50">
+      </div>
+    </div>
+    <div id="p1-diagrama" class="grafico"></div>
+    <div class="saida">
+      Ângulo de paralaxe: <strong id="p1-alpha-arcsec">—</strong> arcsegundos
+      (<span id="p1-alpha-rad">—</span> rad).
+      Note que o diagrama exagera enormemente o ângulo real para que ele
+      seja visível — na prática, mesmo a estrela mais próxima do Sol tem
+      $\alpha < 1''$, um ângulo tão pequeno quanto o diâmetro de uma moeda
+      vista a mais de 4 km de distância.
+    </div>
+  </div>
+</div>
+
+<h2>Aproximação de pequenos ângulos</h2>
+
+<p>Como \(\tan\alpha = \sen\alpha/\cos\alpha\), e os ângulos de paralaxe
+estelar são sempre extremamente pequenos (menores que \(1''\) mesmo para as
+estrelas mais próximas), podemos aproximar \(\sen\alpha\) e \(\cos\alpha\) por
+uma expansão em série de Taylor de primeira ordem em torno de \(\alpha=0\).
+Lembrando a forma geral da série de Taylor,</p>
+
+\[
+f(x) = \sum_{n=0}^{\infty} a_n (x-a)^n, \qquad a_n = \frac{f^{(n)}(a)}{n!},
+\]
+
+<p>os primeiros termos são</p>
+
+\[
+f(x) = f(a)\big|_{n=0} + f'(a)\,\frac{(x-a)^1}{1!}\bigg|_{n=1} + f''(a)\,\frac{(x-a)^2}{2!} + \cdots
+\]
+
+<div class="caixa exemplo">
+  <div class="rotulo">Exemplo — Expansão de sen α e cos α em torno de α = 0</div>
+  <div class="conteudo">
+    <p>Para \(f(\alpha)=\sen\alpha\):</p>
+    \[
+    f(0)=\sen(0)=0, \quad f'(0)=\cos(0)=1, \quad f''(0)=-\sen(0)=0
+    \quad\Longrightarrow\quad
+    f(\alpha) \approx 0 + \frac{1\cdot\alpha}{1!} + \cdots \approx \alpha.
+    \]
+    <p>Para \(f(\alpha)=\cos\alpha\):</p>
+    \[
+    f(0)=\cos(0)=1, \quad f'(0)=-\sen(0)=0, \quad f''(0)=-\cos(0)=-1
+    \quad\Longrightarrow\quad
+    f(\alpha) \approx 1 + \frac{0\cdot\alpha}{1!} + \frac{(-1)\alpha^2}{2!} \approx 1.
+    \]
+    <p>Logo, em aproximação de primeira ordem,</p>
+    \[
+    \sen\alpha \approx \alpha, \qquad \cos\alpha \approx 1,
+    \qquad\Longrightarrow\qquad
+    \boxed{\tan\alpha \approx \alpha \quad \text{(em radianos)}.}
+    \tag{1.2}
+    \]
+  </div>
+</div>
+
+<div class="caixa atencao">
+  <div class="rotulo">Observação — Validade da aproximação</div>
+  <div class="conteudo">
+    <p>A aproximação \(\tan\alpha\approx\alpha\) só é boa para ângulos pequenos
+    <em>expressos em radianos</em>. O erro relativo é da ordem de \(\alpha^2/3\);
+    para o maior ângulo de paralaxe estelar conhecido (Proxima Centauri,
+    \(\alpha \approx 0{,}768''\approx 3{,}7\times10^{-6}\,\mathrm{rad}\)), esse
+    erro é completamente desprezível — da ordem de \(10^{-12}\). A aproximação é,
+    portanto, excelente para qualquer estrela.</p>
+  </div>
+</div>
+
+<h2>Módulo interativo 2 — Erro da aproximação de pequenos ângulos</h2>
+
+<div class="modulo">
+  <div class="rotulo">tan α exato vs. aproximação α (radianos)</div>
+  <div class="corpo">
+    <div class="controles">
+      <div class="controle">
+        <label for="p2-max">Ângulo máximo do gráfico <span class="valor" id="p2-max-valor">30°</span></label>
+        <input type="range" id="p2-max" min="1" max="60" step="1" value="30">
+      </div>
+    </div>
+    <div id="p2-grafico" class="grafico"></div>
+    <div class="saida">
+      No ângulo limite escolhido, o erro percentual de
+      \(\alpha \approx \tan\alpha\) é de <strong id="p2-erro">—</strong>.
+      Compare com o erro para paralaxes estelares reais (bem abaixo de
+      \(1''=2{,}78\times10^{-4}\) graus): nessa escala o erro é tão pequeno
+      que a curva de \(\tan\alpha\) e a reta \(\alpha\) são indistinguíveis.
+    </div>
+  </div>
+</div>
+
+<h2>Definição do parsec</h2>
+
+<p>Combinando a Equação (1.1) com a aproximação de pequenos
+ângulos (Equação (1.2)), a distância de um astro pode ser
+expressa de forma geral por</p>
+
+\[
+\boxed{d = \frac{1}{\alpha}}\,, \qquad \text{com } d \text{ em parsecs e } \alpha \text{ em segundos de arco.}
+\tag{1.3}
+\]
+
+<p>A unidade de medida da distância por paralaxe é o <strong>parsec</strong>
+(<em>parallax</em> + <em>second of arc</em>). Um objeto astronômico que possui
+\(\alpha = 1''\) está, por definição, a uma distância de \(1\) parsec.</p>
+
+<div class="caixa exemplo">
+  <div class="rotulo">Exemplo — De onde vem o valor de 1 parsec em UA</div>
+  <div class="conteudo">
+    <p>O ângulo de \(1''\) (um segundo de arco), expresso em radianos, vale:</p>
+    \[
+    1'' = \left(\frac{1}{3600}\right)\left(\frac{2\pi}{360}\right)
+    = 4{,}848\times 10^{-6}\,\mathrm{rad}.
+    \]
+    <p>Logo,</p>
+    \[
+    1\,\mathrm{pc} = \frac{1\,\mathrm{UA}}{4{,}848\times 10^{-6}}
+    \approx 206\,265\,\mathrm{UA}.
+    \]
+  </div>
+</div>
+
+<h2>Módulo interativo 3 — Calculadora de paralaxe ↔ distância</h2>
+
+<div class="modulo">
+  <div class="rotulo">d(pc) = 1 / α(arcsec)</div>
+  <div class="corpo">
+    <div class="controles">
+      <div class="controle">
+        <label for="p3-alpha-num">Paralaxe α <span class="valor">(arcsegundos)</span></label>
+        <input type="number" id="p3-alpha-num" min="0.0005" max="1" step="0.0001" value="0.1">
+        <input type="range" id="p3-alpha-range" min="-3.3" max="0" step="0.001" value="-1">
+      </div>
+      <div class="controle">
+        <label for="p3-d-num">Distância d <span class="valor">(parsecs)</span></label>
+        <input type="number" id="p3-d-num" min="1" max="2000" step="0.1" value="10">
+        <input type="range" id="p3-d-range" min="0" max="3.3" step="0.001" value="1">
+      </div>
+    </div>
+    <div class="saida">
+      Os dois pares de controles estão vinculados por \(d = 1/\alpha\):
+      ajuste qualquer um dos quatro campos e os outros três se atualizam.
+      Estrelas reais de referência: Proxima Centauri
+      (\(\alpha\approx0{,}768''\), \(d\approx1{,}30\,\mathrm{pc}\)),
+      Sirius (\(\alpha\approx0{,}379''\), \(d\approx2{,}64\,\mathrm{pc}\)),
+      Vega (\(\alpha\approx0{,}130''\), \(d\approx7{,}68\,\mathrm{pc}\)).
+    </div>
+  </div>
+</div>
+
+<div class="caixa atencao">
+  <div class="rotulo">Observação — A definição oficial moderna do parsec</div>
+  <div class="conteudo">
+    <p>A dedução acima — motivar o parsec a partir da relação geométrica de
+    pequenos ângulos \(d=1/\alpha\) — é a origem histórica e conceitual da
+    unidade, e reproduz corretamente o valor numérico usado ao longo deste
+    livro. Desde 2015, porém, a União Astronômica Internacional (IAU) fixa o
+    parsec por uma definição puramente numérica, independente de qualquer
+    aproximação geométrica: as notas da Resolução B2 da IAU (2015) definem
+    \(1\,\mathrm{pc}\equiv648\,000/\pi\,\mathrm{UA}\) como um valor
+    <em>exato</em> — apoiada, por sua vez, na Resolução B2 da XXVIII<sup>a</sup> Assembleia
+    Geral da IAU (2012), que fixou a unidade astronômica em
+    \(1\,\mathrm{UA}=149\,597\,870\,700\,\mathrm{m}\) exatamente. Numericamente,
+    isso coincide com o valor obtido pela relação geométrica de pequenos
+    ângulos (\(206\,264{,}806\ldots\) UA, arredondado para \(206\,265\) UA no
+    Exemplo acima), então nenhum resultado deste livro é afetado — mas vale
+    saber que, formalmente, o parsec de hoje não depende mais da aproximação
+    \(\tan\alpha\approx\alpha\) que o originou historicamente
+    (Mamajek et al. 2015).</p>
+  </div>
+</div>
+
+<div class="caixa contexto">
+  <div class="rotulo">Contexto astrofísico — Alcance do método e missões astrométricas</div>
+  <div class="conteudo">
+    <p>A paralaxe trigonométrica é o único método de determinação de distâncias
+    verdadeiramente <em>direto</em> em astronomia — todos os demais indicadores de
+    distância (paralaxe espectroscópica, relação período–luminosidade de
+    Cefeidas, supernovas tipo Ia, etc.) são calibrados, direta ou
+    indiretamente, a partir dela. Da Terra, o satélite <em>Hipparcos</em>
+    (1989–1993) mediu paralaxes com precisão de milissegundos de arco para
+    cerca de 118 mil estrelas (Perryman et al. 1997). A missão <em>Gaia</em>, da
+    ESA, revolucionou o método ao medir paralaxes com precisão de dezenas de
+    microssegundos de arco para mais de 1,5 bilhão de estrelas
+    (Gaia Collaboration, DR3), alcançando distâncias diretas para estrelas a dezenas de
+    milhares de parsecs. Um ponto importante: para \(\alpha\) muito pequeno (ou
+    seja, estrelas muito distantes) e ainda mais na presença de ruído
+    observacional, a relação \(d=1/\alpha\) não deve ser invertida ingenuamente —
+    é necessário um tratamento estatístico (bayesiano) apropriado, como
+    discutido em Bailer-Jones et al. (2021), e correções sistemáticas ao zero-point
+    da própria paralaxe medida (Lindegren et al. 2021).</p>
+  </div>
+</div>
+
+<h2>Magnitudes</h2>
+
+<p>As magnitudes estelares — e, também, de todos os astros — são um parâmetro
+muito importante na caracterização de objetos astronômicos, pois são de
+fácil determinação e carregam muitas informações sobre os corpos. Esse
+tema é desenvolvido em detalhe no <a href="cap02_magnitudes.html">Capítulo 2 — Magnitudes Estelares</a>.</p>
+
+<div class="caixa leitura">
+  <div class="rotulo">Leituras complementares e referências atuais</div>
+  <div class="conteudo">
+    <p>Para a conexão entre paralaxe, distância e magnitude absoluta (o chamado
+    <em>módulo de distância</em>, \(m-M = 5\log_{10} d_{\mathrm{pc}} - 5\)), ver o
+    Capítulo 3 de Oliveira &amp; Saraiva (2017) e o Capítulo 2 de
+    Christensen-Dalsgaard (2008).</p>
+  </div>
+</div>
+
+</div>
+
+<footer class="rodape">
+  Estrutura e Evolução Estelar — Notas de Aula, Programa de Pós-Graduação em
+  Física, Universidade Federal de Sergipe (UFS). Módulo HTML interativo
+  gerado como complemento ao texto em LaTeX/PDF do Capítulo 1.
+</footer>
+
+<script>
+(function () {
+  var PLOTLY_CONFIG = { responsive: true, displaylogo: false, displayModeBar: false };
+  var AU_PC = 206265; // UA por parsec, usado para o desenho em escala do diagrama
+
+  // ---------- Módulo 1: geometria da paralaxe ----------
+  var distSlider = document.getElementById('p1-dist');
+  var distValor = document.getElementById('p1-dist-valor');
+  var alphaArcsec = document.getElementById('p1-alpha-arcsec');
+  var alphaRad = document.getElementById('p1-alpha-rad');
+  var diagramaDiv = document.getElementById('p1-diagrama');
+  diagramaDiv.style.height = '380px'; // altura fixa: evita que o container cresça a partir do próprio conteúdo
+
+  function desenhaDiagrama(d_pc) {
+    var alpha_arcsec = 1 / d_pc;
+    var alpha_rad = alpha_arcsec * (Math.PI / (180 * 3600));
+
+    // Ângulo de exibição (exagerado) apenas para fins visuais: mapeia
+    // logaritmicamente d_pc em [1,1000] para um ângulo visual em [55°,10°],
+    // preservando "mais distante => ângulo visualmente menor".
+    var t = (Math.log10(d_pc) - 0) / 3; // 0..1
+    var angVisualDeg = 55 - t * 45;
+    var angVisualRad = angVisualDeg * Math.PI / 180;
+
+    var R = 1; // raio orbital (UA), fixo no desenho
+    var Lestrela = 4.2; // distância de desenho da estrela (fixa, não em escala real)
+    var xEstrela = Lestrela;
+    var yEstrela = 0;
+
+    // Terra em t0 e t0+6meses, e Sol na origem
+    var terra1 = [-R, 0];
+    var terra2 = [R, 0];
+    var sol = [0, 0];
+
+    // Posição da estrela tal que o ângulo Sol-Terra2-Estrela = angVisualRad
+    var yE = R / Math.tan(angVisualRad);
+    var estrela = [0, yE + 0.001]; // acima do eixo, alinhada verticalmente com o Sol
+
+    var shapes = [
+      { type: 'circle', xref: 'x', yref: 'y', x0: -R, y0: -R, x1: R, y1: R, line: { dash: 'dot', color: '#999' } },
+      { type: 'line', x0: terra1[0], y0: terra1[1], x1: estrela[0], y1: estrela[1], line: { color: '#0d6e6e', width: 1.5 } },
+      { type: 'line', x0: terra2[0], y0: terra2[1], x1: estrela[0], y1: estrela[1], line: { color: '#963c1e', width: 1.5 } },
+      { type: 'line', x0: sol[0], y0: sol[1], x1: estrela[0], y1: estrela[1], line: { color: '#c9c9c9', width: 1, dash: 'dash' } }
+    ];
+
+    var pontos = {
+      x: [sol[0], terra1[0], terra2[0], estrela[0]],
+      y: [sol[1], terra1[1], terra2[1], estrela[1]],
+      mode: 'markers+text',
+      type: 'scatter',
+      text: ['Sol', 'Terra, t₀', 'Terra, t₀+6m', 'estrela'],
+      textposition: ['bottom center', 'bottom center', 'bottom center', 'top center'],
+      marker: { size: [16, 10, 10, 14], color: ['#f4c542', '#3a6ea5', '#3a6ea5', '#e8823c'], symbol: ['circle', 'circle', 'circle', 'star'] },
+      hoverinfo: 'skip'
+    };
+
+    var layout = {
+      shapes: shapes,
+      showlegend: false,
+      height: 380,
+      margin: { l: 30, r: 30, t: 10, b: 30 },
+      xaxis: { range: [-2, Math.max(3, yE * 0.3 + 2)], zeroline: false, showgrid: false, visible: false },
+      yaxis: { range: [-1.8, yE + 1.2], zeroline: false, showgrid: false, visible: false, scaleanchor: 'x', constrain: 'domain' },
+      annotations: [
+        { x: (terra2[0]) * 0.5, y: (yE) * 0.35, text: 'α', showarrow: false, font: { size: 16, color: '#963c1e' } }
+      ]
+    };
+
+    Plotly.react(diagramaDiv, [pontos], layout, PLOTLY_CONFIG);
+
+    distValor.textContent = d_pc + ' pc';
+    alphaArcsec.textContent = alpha_arcsec.toPrecision(4);
+    alphaRad.textContent = alpha_rad.toExponential(3);
+  }
+
+  distSlider.addEventListener('input', function () {
+    desenhaDiagrama(Number(distSlider.value));
+  });
+  desenhaDiagrama(Number(distSlider.value));
+
+  // ---------- Módulo 2: erro da aproximação de pequenos ângulos ----------
+  var maxSlider = document.getElementById('p2-max');
+  var maxValor = document.getElementById('p2-max-valor');
+  var erroSpan = document.getElementById('p2-erro');
+  var graficoDiv = document.getElementById('p2-grafico');
+  graficoDiv.style.height = '340px';
+
+  function desenhaErro(maxDeg) {
+    var n = 200;
+    var xsDeg = [];
+    var tanY = [];
+    var aproxY = [];
+    for (var i = 0; i <= n; i++) {
+      var deg = (maxDeg * i) / n;
+      var rad = deg * Math.PI / 180;
+      xsDeg.push(deg);
+      tanY.push(Math.tan(rad));
+      aproxY.push(rad);
+    }
+    var maxRad = maxDeg * Math.PI / 180;
+    var erroPct = 100 * (Math.tan(maxRad) - maxRad) / Math.tan(maxRad);
+
+    var traceTan = { x: xsDeg, y: tanY, mode: 'lines', name: 'tan α (exato)', line: { color: '#963c1e', width: 2.5 } };
+    var traceAprox = { x: xsDeg, y: aproxY, mode: 'lines', name: 'α (radianos, aproximação)', line: { color: '#0d6e6e', width: 2.5, dash: 'dash' } };
+
+    var layout = {
+      height: 340,
+      margin: { l: 55, r: 20, t: 10, b: 45 },
+      xaxis: { title: 'α (graus)' },
+      yaxis: { title: 'tan α  ou  α (rad)' },
+      legend: { orientation: 'h', y: -0.25 }
+    };
+
+    Plotly.react(graficoDiv, [traceTan, traceAprox], layout, PLOTLY_CONFIG);
+
+    maxValor.textContent = maxDeg + '°';
+    erroSpan.textContent = erroPct.toFixed(2) + '%';
+  }
+
+  maxSlider.addEventListener('input', function () {
+    desenhaErro(Number(maxSlider.value));
+  });
+  desenhaErro(Number(maxSlider.value));
+
+  // ---------- Módulo 3: calculadora paralaxe <-> distância ----------
+  var alphaNum = document.getElementById('p3-alpha-num');
+  var alphaRange = document.getElementById('p3-alpha-range');
+  var dNum = document.getElementById('p3-d-num');
+  var dRange = document.getElementById('p3-d-range');
+
+  var atualizando = false;
+
+  function setFromAlpha(alpha) {
+    if (atualizando) return;
+    atualizando = true;
+    alpha = Math.max(0.0005, Math.min(1, alpha));
+    var d = 1 / alpha;
+    alphaNum.value = alpha;
+    alphaRange.value = Math.log10(alpha);
+    dNum.value = Number(d.toFixed(3));
+    dRange.value = Math.log10(d);
+    atualizando = false;
+  }
+
+  function setFromD(d) {
+    if (atualizando) return;
+    atualizando = true;
+    d = Math.max(1, Math.min(2000, d));
+    var alpha = 1 / d;
+    dNum.value = d;
+    dRange.value = Math.log10(d);
+    alphaNum.value = Number(alpha.toPrecision(4));
+    alphaRange.value = Math.log10(alpha);
+    atualizando = false;
+  }
+
+  alphaNum.addEventListener('input', function () { setFromAlpha(Number(alphaNum.value)); });
+  alphaRange.addEventListener('input', function () { setFromAlpha(Math.pow(10, Number(alphaRange.value))); });
+  dNum.addEventListener('input', function () { setFromD(Number(dNum.value)); });
+  dRange.addEventListener('input', function () { setFromD(Math.pow(10, Number(dRange.value))); });
+
+  setFromAlpha(Number(alphaNum.value));
+
+  // Reforço além de responsive:true: garante o reajuste de largura em
+  // navegadores/casos onde o ResizeObserver interno do Plotly não dispara
+  // (ex. redimensionamento da janela do sistema operacional).
+  window.addEventListener('resize', function () {
+    [diagramaDiv, graficoDiv].forEach(function (div) {
+      if (div) Plotly.Plots.resize(div);
+    });
+  });
+})();
+</script>
