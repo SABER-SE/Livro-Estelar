@@ -221,7 +221,7 @@ a { color: var(--link); }
 }
 .modulo-card .controles { margin-bottom: 0.6rem; }
 .modulo-card .controle input[type="range"] { accent-color: #1D9E75; }
-.modulo-card .controle .valor { color: #1D9E75; }
+.modulo-card .controle .valor { color: #17805f; }
 
 /* Canvas do Chart.js "sangra" até a borda do card, alinhando com a
    margem do texto — mesmo critério de alinhamento já validado nos
@@ -249,15 +249,19 @@ a { color: var(--link); }
   font-size: 0.82rem;
   font-weight: 600;
   color: #fff;
-  background: #1D9E75;
+  /* #17805f (não #1D9E75) para atender contraste WCAG AA com texto branco
+     (4,9:1 vs. 3,4:1 do tom mais claro — ver Etapa D da auditoria,
+     docs/AUDITORIA.md). Mesmo tom da família de verde já usada como
+     estado :hover, apenas promovido a cor de repouso. */
+  background: #17805f;
   border: none;
   border-radius: 6px;
   padding: 0.5rem 0.9rem;
   cursor: pointer;
   white-space: nowrap;
 }
-.botao-modulo:hover { background: #17805f; }
-.botao-modulo:active { background: #136349; }
+.botao-modulo:hover { background: #136349; }
+.botao-modulo:active { background: #0f4f3a; }
 
 /* Módulo em destaque — usado para a peça central de um capítulo (ex.
    equilíbrio hidrostático no Cap. 5): mesmo .modulo-card, com uma borda
@@ -295,6 +299,11 @@ th, td {
   text-align: center;
 }
 th { font-family: -apple-system, "Segoe UI", Arial, sans-serif; background: #f4f4ef; }
+td:nth-child(3), td:nth-child(4), th:nth-child(3), th:nth-child(4) { text-align: left; }
+.tabela-scroll { overflow-x: auto; }
+.tabela-scroll table { min-width: 720px; }
+tr.linha-destacada td { background: #e8f6f0; font-weight: 600; }
+caption { caption-side: top; text-align: left; font-size: .85rem; color: var(--texto-suave); padding: .3rem 0; }
 
 .equacao-caixa {
   border: 1px solid #999;
@@ -361,3 +370,144 @@ footer.rodape {
   h1 { font-size: 1.5rem; }
   .topo .miolo { font-size: 0.85rem; }
 }
+
+/* --- Fluxograma navegável (Cap. 7, síntese) --- */
+.fluxograma {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-areas:
+    "nuvem colapso proto proto pms"
+    "nuvem colapso proto proto zams"
+    "gi    .       poeira poeira ."
+    "gi    .       planetesimais planetesimais ."
+    ".     rochoso embrioes embrioes gigante"
+    ".     rochoso embrioes embrioes gigante";
+  gap: 0.6rem;
+  margin: 1rem 0;
+  position: relative;
+}
+.fluxograma .no {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0.7rem 0.6rem;
+  border-radius: 10px;
+  border: 2px solid var(--cor-contexto);
+  background: var(--cor-contexto-fundo);
+  color: var(--cor-contexto);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  line-height: 1.25;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.fluxograma .no:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+}
+.fluxograma .no.cor-atencao { border-color: var(--cor-atencao); background: var(--cor-atencao-fundo); color: var(--cor-atencao); }
+.fluxograma .no.cor-exemplo { border-color: var(--cor-exemplo); background: var(--cor-exemplo-fundo); color: var(--cor-exemplo); }
+.fluxograma .no.cor-contexto { border-color: var(--cor-contexto); background: var(--cor-contexto-fundo); color: var(--cor-contexto); }
+.fluxograma .no.tracejado { border-style: dashed; }
+.fluxograma-setas { display: none; }
+@media (max-width: 720px) {
+  .fluxograma {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "nuvem" "colapso" "proto" "pms" "zams"
+      "poeira" "planetesimais" "embrioes"
+      "rochoso" "gigante" "gi";
+  }
+}
+
+/* =====================================================================
+   Capítulo 11 — Tabela periódica da origem cósmica e demais widgets
+   Paleta categórica de processos de nucleossíntese: baseada em Okabe &
+   Ito (2008), estendida a 13 categorias para acessibilidade a
+   daltônicos (evita depender só de matiz vermelho/verde). Ver
+   window.PROC_CAP11 em cap11_modulos.js para as cores exatas.
+   ===================================================================== */
+.mtab-wrap { display: flex; flex-direction: column; gap: .8rem; }
+.mtab-controles { display: flex; flex-wrap: wrap; gap: .6rem; align-items: center; }
+.mtab-controles select { padding: .4rem .5rem; border-radius: 6px; border: 1px solid #ccc; font-size: .85rem; }
+.mtab-grid {
+  display: grid;
+  grid-template-columns: repeat(18, minmax(28px, 1fr));
+  grid-template-rows: repeat(10, minmax(28px, auto));
+  gap: 2px;
+  overflow-x: auto;
+  padding-bottom: .3rem;
+}
+.mtab-elemento {
+  position: relative;
+  border-radius: 4px;
+  border: 1px solid rgba(0,0,0,0.15);
+  min-width: 28px;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: .58rem;
+  line-height: 1;
+  color: #1a1a1a;
+  transition: transform .1s, box-shadow .1s, opacity .15s;
+}
+.mtab-elemento .mtab-z { font-size: .48rem; opacity: .75; position: absolute; top: 1px; left: 2px; }
+.mtab-elemento .mtab-sym { font-weight: 700; font-size: .68rem; margin-top: 2px; }
+.mtab-elemento:hover { transform: scale(1.18); z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+.mtab-elemento.selecionado { outline: 3px solid #222; outline-offset: 1px; z-index: 6; }
+.mtab-elemento.esmaecido { opacity: .12; }
+.mtab-legenda { display: flex; flex-wrap: wrap; gap: .4rem .9rem; font-size: .78rem; }
+.mtab-legenda-item { display: flex; align-items: center; gap: .35rem; }
+.mtab-swatch { width: 13px; height: 13px; border-radius: 3px; display: inline-block; border: 1px solid rgba(0,0,0,0.2); }
+.mtab-painel {
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: #fafaf6;
+  padding: .8rem 1rem;
+  min-height: 4.5rem;
+}
+.mtab-painel h4 { margin: 0 0 .4rem; }
+.mtab-painel p { margin: .3rem 0 0; font-size: .9rem; }
+.mtab-badges { display: flex; flex-wrap: wrap; gap: .3rem; }
+.mtab-badge { color: #fff; font-size: .72rem; padding: .15rem .5rem; border-radius: 999px; text-shadow: 0 1px 1px rgba(0,0,0,.35); }
+
+.botao-modo-toggle {
+  padding: .4rem .8rem; border-radius: 999px; border: 1.5px solid #1D9E75;
+  /* texto em #17805f, não #1D9E75 — mesmo ajuste de contraste WCAG AA
+     do .botao-modulo (ver Etapa D, docs/AUDITORIA.md) */
+  background: #fff; color: #17805f; font-size: .82rem; cursor: pointer;
+}
+.botao-modo-toggle.ativo { background: #17805f; color: #fff; }
+
+.apendice-codigo {
+  position: relative;
+  background: #1e1e1e;
+  color: #d4d4d4;
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  font-family: 'Courier New', Consolas, monospace;
+  font-size: .82rem;
+  overflow-x: auto;
+  white-space: pre;
+  line-height: 1.45;
+}
+.apendice-codigo .tok-com { color: #6a9955; }
+.apendice-codigo .tok-key { color: #4fc1ff; }
+.apendice-codigo .tok-str { color: #ce9178; }
+.apendice-codigo .tok-num { color: #b5cea8; }
+.botao-copiar {
+  position: absolute; top: .6rem; right: .6rem;
+  background: #333; color: #eee; border: 1px solid #555;
+  border-radius: 6px; padding: .3rem .6rem; font-size: .75rem; cursor: pointer;
+}
+.botao-copiar:hover { background: #444; }
+.botao-copiar.copiado { background: #1D9E75; border-color: #1D9E75; }
+
+.figura-cap11 { margin: 1.2rem 0; text-align: center; }
+.figura-cap11 img, .figura-cap11 object { max-width: 100%; height: auto; border: 1px solid var(--borda); border-radius: 8px; background: #fff; }
+.figura-cap11 figcaption { font-size: .85rem; color: var(--texto-suave); margin-top: .5rem; text-align: left; padding: 0 .3rem; }
+.figura-cap11 .figura-num { font-weight: 700; color: var(--texto); }

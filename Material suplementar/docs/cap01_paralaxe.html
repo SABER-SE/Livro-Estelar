@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <meta charset="utf-8">
 <title>Distância por Paralaxe</title>
 <meta name="description" content="Módulo interativo do Capítulo 1: geometria da paralaxe, aproximação de pequenos ângulos e definição do parsec.">
@@ -13,7 +14,8 @@ window.MathJax = {
 };
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.0/plotly.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="assets/comuns.js"></script>
 
 <div class="topo">
   <div class="miolo">
@@ -22,7 +24,7 @@ window.MathJax = {
     <span class="titulo-livro">Estrutura e Evolução Estelar — Notas de Aula (UFS)</span>
     <span class="sep">·</span>
     <!-- TODO: confirmar URL do GitHub Pages / repositório -->
-    <a href="#" title="TODO: confirmar link do repositório no GitHub">Repositório no GitHub</a>
+    <a href="#" id="link-repo" title="TODO: confirmar link do repositório no GitHub">Repositório no GitHub</a>
   </div>
 </div>
 
@@ -53,24 +55,24 @@ d = \frac{1\,\mathrm{UA}}{\tan\alpha}.
 \tag{1.1}
 \]
 
-<div class="modulo">
-  <div class="rotulo">Diagrama Sol–Terra–estrela: ajuste a distância</div>
-  <div class="corpo">
-    <div class="controles">
-      <div class="controle">
-        <label for="p1-dist">Distância da estrela <span class="valor" id="p1-dist-valor">50 pc</span></label>
-        <input type="range" id="p1-dist" min="1" max="1000" step="1" value="50">
-      </div>
+<div class="modulo-card">
+  <div class="rotulo-card">Diagrama Sol–Terra–estrela: ajuste a distância</div>
+  <div class="controles">
+    <div class="controle">
+      <label for="p1-dist">Distância da estrela <span class="valor" id="p1-dist-valor">50 pc</span></label>
+      <input type="range" id="p1-dist" min="1" max="1000" step="1" value="50">
     </div>
-    <div id="p1-diagrama" class="grafico"></div>
-    <div class="saida">
-      Ângulo de paralaxe: <strong id="p1-alpha-arcsec">—</strong> arcsegundos
-      (<span id="p1-alpha-rad">—</span> rad).
-      Note que o diagrama exagera enormemente o ângulo real para que ele
-      seja visível — na prática, mesmo a estrela mais próxima do Sol tem
-      $\alpha < 1''$, um ângulo tão pequeno quanto o diâmetro de uma moeda
-      vista a mais de 4 km de distância.
-    </div>
+  </div>
+  <div class="grafico-card">
+    <canvas id="p1-diagrama" role="img" aria-label="Diagrama esquemático Sol-Terra-estrela mostrando o triângulo de paralaxe: a Terra em duas posições da órbita (separadas por seis meses), o Sol no centro, e a estrela-alvo distante, com o ângulo de paralaxe alfa marcado no vértice da estrela." style="width:100%;height:380px;display:block;"></canvas>
+  </div>
+  <div class="saida">
+    Ângulo de paralaxe: <strong id="p1-alpha-arcsec">—</strong> arcsegundos
+    (<span id="p1-alpha-rad">—</span> rad).
+    Note que o diagrama exagera enormemente o ângulo real para que ele
+    seja visível — na prática, mesmo a estrela mais próxima do Sol tem
+    $\alpha < 1''$, um ângulo tão pequeno quanto o diâmetro de uma moeda
+    vista a mais de 4 km de distância.
   </div>
 </div>
 
@@ -131,23 +133,23 @@ f(x) = f(a)\big|_{n=0} + f'(a)\,\frac{(x-a)^1}{1!}\bigg|_{n=1} + f''(a)\,\frac{(
 
 <h2>Módulo interativo 2 — Erro da aproximação de pequenos ângulos</h2>
 
-<div class="modulo">
-  <div class="rotulo">tan α exato vs. aproximação α (radianos)</div>
-  <div class="corpo">
-    <div class="controles">
-      <div class="controle">
-        <label for="p2-max">Ângulo máximo do gráfico <span class="valor" id="p2-max-valor">30°</span></label>
-        <input type="range" id="p2-max" min="1" max="60" step="1" value="30">
-      </div>
+<div class="modulo-card">
+  <div class="rotulo-card">tan α exato vs. aproximação α (radianos)</div>
+  <div class="controles">
+    <div class="controle">
+      <label for="p2-max">Ângulo máximo do gráfico <span class="valor" id="p2-max-valor">30°</span></label>
+      <input type="range" id="p2-max" min="1" max="60" step="1" value="30">
     </div>
-    <div id="p2-grafico" class="grafico"></div>
-    <div class="saida">
-      No ângulo limite escolhido, o erro percentual de
-      \(\alpha \approx \tan\alpha\) é de <strong id="p2-erro">—</strong>.
-      Compare com o erro para paralaxes estelares reais (bem abaixo de
-      \(1''=2{,}78\times10^{-4}\) graus): nessa escala o erro é tão pequeno
-      que a curva de \(\tan\alpha\) e a reta \(\alpha\) são indistinguíveis.
-    </div>
+  </div>
+  <div class="grafico-card">
+    <canvas id="p2-grafico" role="img" aria-label="Gráfico de tan alfa (exato) e alfa em radianos (aproximação) em função de alfa em graus, mostrando as duas curvas divergindo para ângulos grandes." style="width:100%;height:340px;display:block;"></canvas>
+  </div>
+  <div class="saida">
+    No ângulo limite escolhido, o erro percentual de
+    \(\alpha \approx \tan\alpha\) é de <strong id="p2-erro">—</strong>.
+    Compare com o erro para paralaxes estelares reais (bem abaixo de
+    \(1''=2{,}78\times10^{-4}\) graus): nessa escala o erro é tão pequeno
+    que a curva de \(\tan\alpha\) e a reta \(\alpha\) são indistinguíveis.
   </div>
 </div>
 
@@ -184,29 +186,27 @@ expressa de forma geral por</p>
 
 <h2>Módulo interativo 3 — Calculadora de paralaxe ↔ distância</h2>
 
-<div class="modulo">
-  <div class="rotulo">d(pc) = 1 / α(arcsec)</div>
-  <div class="corpo">
-    <div class="controles">
-      <div class="controle">
-        <label for="p3-alpha-num">Paralaxe α <span class="valor">(arcsegundos)</span></label>
-        <input type="number" id="p3-alpha-num" min="0.0005" max="1" step="0.0001" value="0.1">
-        <input type="range" id="p3-alpha-range" min="-3.3" max="0" step="0.001" value="-1">
-      </div>
-      <div class="controle">
-        <label for="p3-d-num">Distância d <span class="valor">(parsecs)</span></label>
-        <input type="number" id="p3-d-num" min="1" max="2000" step="0.1" value="10">
-        <input type="range" id="p3-d-range" min="0" max="3.3" step="0.001" value="1">
-      </div>
+<div class="modulo-card">
+  <div class="rotulo-card">d(pc) = 1 / α(arcsec)</div>
+  <div class="controles">
+    <div class="controle">
+      <label for="p3-alpha-num">Paralaxe α <span class="valor">(arcsegundos)</span></label>
+      <input type="number" id="p3-alpha-num" min="0.0005" max="1" step="0.0001" value="0.1">
+      <input type="range" id="p3-alpha-range" aria-label="Paralaxe α, em arcsegundos (escala log)" min="-3.3" max="0" step="0.001" value="-1">
     </div>
-    <div class="saida">
-      Os dois pares de controles estão vinculados por \(d = 1/\alpha\):
-      ajuste qualquer um dos quatro campos e os outros três se atualizam.
-      Estrelas reais de referência: Proxima Centauri
-      (\(\alpha\approx0{,}768''\), \(d\approx1{,}30\,\mathrm{pc}\)),
-      Sirius (\(\alpha\approx0{,}379''\), \(d\approx2{,}64\,\mathrm{pc}\)),
-      Vega (\(\alpha\approx0{,}130''\), \(d\approx7{,}68\,\mathrm{pc}\)).
+    <div class="controle">
+      <label for="p3-d-num">Distância d <span class="valor">(parsecs)</span></label>
+      <input type="number" id="p3-d-num" min="1" max="2000" step="0.1" value="10">
+      <input type="range" id="p3-d-range" aria-label="Distância d, em parsecs (escala log)" min="0" max="3.3" step="0.001" value="1">
     </div>
+  </div>
+  <div class="saida">
+    Os dois pares de controles estão vinculados por \(d = 1/\alpha\):
+    ajuste qualquer um dos quatro campos e os outros três se atualizam.
+    Estrelas reais de referência: Proxima Centauri
+    (\(\alpha\approx0{,}768''\), \(d\approx1{,}30\,\mathrm{pc}\)),
+    Sirius (\(\alpha\approx0{,}379''\), \(d\approx2{,}64\,\mathrm{pc}\)),
+    Vega (\(\alpha\approx0{,}130''\), \(d\approx7{,}68\,\mathrm{pc}\)).
   </div>
 </div>
 
@@ -254,6 +254,55 @@ expressa de forma geral por</p>
   </div>
 </div>
 
+<h2>Módulo interativo 4 — A paralaxe acontecendo</h2>
+
+<div class="modulo-card">
+  <div class="rotulo-card">A Terra orbitando o Sol, com a estrela-alvo oscilando contra o fundo de estrelas distantes</div>
+  <p class="leitura-card" style="margin-top:0;">
+    Os Módulos 1 e 3 mostram a geometria da paralaxe num instante fixo.
+    Aqui, a Terra orbita o Sol ao longo de um ano, e a posição aparente
+    da estrela-alvo (próxima) é comparada à posição fixa de estrelas de
+    fundo (muito mais distantes, praticamente sem paralaxe perceptível)
+    — a paralaxe deixa de ser um ângulo estático e passa a ser o
+    <em>movimento de vaivém</em> que de fato se observa ao longo do ano.
+  </p>
+  <div class="controles">
+    <div class="controle">
+      <label for="p4-dist">Distância da estrela-alvo <span class="valor" id="p4-dist-valor">2 pc</span></label>
+      <input type="range" id="p4-dist" min="1" max="20" step="0.5" value="2">
+    </div>
+    <div class="controle" style="display:flex;gap:0.5rem;align-items:flex-end;">
+      <button type="button" id="p4-play" class="botao-modulo">▶ Iniciar órbita</button>
+      <button type="button" id="p4-reset" class="botao-modulo">↺ Reiniciar</button>
+    </div>
+  </div>
+  <div class="grafico-card" style="display:flex;flex-wrap:wrap;gap:1rem;">
+    <div style="flex:1 1 260px;height:280px;">
+      <canvas id="p4-orbita" role="img" aria-label="Animação da Terra orbitando o Sol ao longo de um ano." style="width:100%;height:280px;display:block;"></canvas>
+    </div>
+    <div style="flex:1 1 260px;height:280px;">
+      <canvas id="p4-ceu" role="img" aria-label="Posição aparente da estrela-alvo contra o fundo de estrelas distantes, oscilando ao longo do ano conforme a Terra orbita." style="width:100%;height:280px;display:block;"></canvas>
+    </div>
+  </div>
+  <p class="leitura-card">
+    Mês: <strong id="p4-mes">jan</strong>. Deslocamento aparente da
+    estrela-alvo em relação ao centro (posição média):
+    \(\Delta\theta=\)<strong id="p4-desloc">—</strong> arcsegundos.
+  </p>
+  <p class="leitura-card">
+    <strong>O que é calculado de verdade:</strong> a amplitude da
+    oscilação vem exatamente de \(\alpha=1/d\) (mesma fórmula do Módulo
+    3), com a posição da Terra na órbita determinando a fase (projeção
+    da posição orbital na direção perpendicular à linha de visada).
+    <strong>O que é apenas ilustrativo:</strong> a escala do desenho — a
+    amplitude real do vaivém no céu é <em>muitíssimo</em> menor que o
+    desenho sugere (por isso o próprio Módulo 1 já avisa que exagera o
+    ângulo); aqui a oscilação no painel direito é normalizada para
+    ocupar todo o painel, não está na escala real do céu. As estrelas de
+    fundo são posições fixas ilustrativas, não um campo estelar real.
+  </p>
+</div>
+
 <h2>Magnitudes</h2>
 
 <p>As magnitudes estelares — e, também, de todos os astros — são um parâmetro
@@ -279,176 +328,4 @@ tema é desenvolvido em detalhe no <a href="cap02_magnitudes.html">Capítulo 2 �
   gerado como complemento ao texto em LaTeX/PDF do Capítulo 1.
 </footer>
 
-<script>
-(function () {
-  var PLOTLY_CONFIG = { responsive: true, displaylogo: false, displayModeBar: false };
-  var AU_PC = 206265; // UA por parsec, usado para o desenho em escala do diagrama
-
-  // ---------- Módulo 1: geometria da paralaxe ----------
-  var distSlider = document.getElementById('p1-dist');
-  var distValor = document.getElementById('p1-dist-valor');
-  var alphaArcsec = document.getElementById('p1-alpha-arcsec');
-  var alphaRad = document.getElementById('p1-alpha-rad');
-  var diagramaDiv = document.getElementById('p1-diagrama');
-  diagramaDiv.style.height = '380px'; // altura fixa: evita que o container cresça a partir do próprio conteúdo
-
-  function desenhaDiagrama(d_pc) {
-    var alpha_arcsec = 1 / d_pc;
-    var alpha_rad = alpha_arcsec * (Math.PI / (180 * 3600));
-
-    // Ângulo de exibição (exagerado) apenas para fins visuais: mapeia
-    // logaritmicamente d_pc em [1,1000] para um ângulo visual em [55°,10°],
-    // preservando "mais distante => ângulo visualmente menor".
-    var t = (Math.log10(d_pc) - 0) / 3; // 0..1
-    var angVisualDeg = 55 - t * 45;
-    var angVisualRad = angVisualDeg * Math.PI / 180;
-
-    var R = 1; // raio orbital (UA), fixo no desenho
-    var Lestrela = 4.2; // distância de desenho da estrela (fixa, não em escala real)
-    var xEstrela = Lestrela;
-    var yEstrela = 0;
-
-    // Terra em t0 e t0+6meses, e Sol na origem
-    var terra1 = [-R, 0];
-    var terra2 = [R, 0];
-    var sol = [0, 0];
-
-    // Posição da estrela tal que o ângulo Sol-Terra2-Estrela = angVisualRad
-    var yE = R / Math.tan(angVisualRad);
-    var estrela = [0, yE + 0.001]; // acima do eixo, alinhada verticalmente com o Sol
-
-    var shapes = [
-      { type: 'circle', xref: 'x', yref: 'y', x0: -R, y0: -R, x1: R, y1: R, line: { dash: 'dot', color: '#999' } },
-      { type: 'line', x0: terra1[0], y0: terra1[1], x1: estrela[0], y1: estrela[1], line: { color: '#0d6e6e', width: 1.5 } },
-      { type: 'line', x0: terra2[0], y0: terra2[1], x1: estrela[0], y1: estrela[1], line: { color: '#963c1e', width: 1.5 } },
-      { type: 'line', x0: sol[0], y0: sol[1], x1: estrela[0], y1: estrela[1], line: { color: '#c9c9c9', width: 1, dash: 'dash' } }
-    ];
-
-    var pontos = {
-      x: [sol[0], terra1[0], terra2[0], estrela[0]],
-      y: [sol[1], terra1[1], terra2[1], estrela[1]],
-      mode: 'markers+text',
-      type: 'scatter',
-      text: ['Sol', 'Terra, t₀', 'Terra, t₀+6m', 'estrela'],
-      textposition: ['bottom center', 'bottom center', 'bottom center', 'top center'],
-      marker: { size: [16, 10, 10, 14], color: ['#f4c542', '#3a6ea5', '#3a6ea5', '#e8823c'], symbol: ['circle', 'circle', 'circle', 'star'] },
-      hoverinfo: 'skip'
-    };
-
-    var layout = {
-      shapes: shapes,
-      showlegend: false,
-      height: 380,
-      margin: { l: 30, r: 30, t: 10, b: 30 },
-      xaxis: { range: [-2, Math.max(3, yE * 0.3 + 2)], zeroline: false, showgrid: false, visible: false },
-      yaxis: { range: [-1.8, yE + 1.2], zeroline: false, showgrid: false, visible: false, scaleanchor: 'x', constrain: 'domain' },
-      annotations: [
-        { x: (terra2[0]) * 0.5, y: (yE) * 0.35, text: 'α', showarrow: false, font: { size: 16, color: '#963c1e' } }
-      ]
-    };
-
-    Plotly.react(diagramaDiv, [pontos], layout, PLOTLY_CONFIG);
-
-    distValor.textContent = d_pc + ' pc';
-    alphaArcsec.textContent = alpha_arcsec.toPrecision(4);
-    alphaRad.textContent = alpha_rad.toExponential(3);
-  }
-
-  distSlider.addEventListener('input', function () {
-    desenhaDiagrama(Number(distSlider.value));
-  });
-  desenhaDiagrama(Number(distSlider.value));
-
-  // ---------- Módulo 2: erro da aproximação de pequenos ângulos ----------
-  var maxSlider = document.getElementById('p2-max');
-  var maxValor = document.getElementById('p2-max-valor');
-  var erroSpan = document.getElementById('p2-erro');
-  var graficoDiv = document.getElementById('p2-grafico');
-  graficoDiv.style.height = '340px';
-
-  function desenhaErro(maxDeg) {
-    var n = 200;
-    var xsDeg = [];
-    var tanY = [];
-    var aproxY = [];
-    for (var i = 0; i <= n; i++) {
-      var deg = (maxDeg * i) / n;
-      var rad = deg * Math.PI / 180;
-      xsDeg.push(deg);
-      tanY.push(Math.tan(rad));
-      aproxY.push(rad);
-    }
-    var maxRad = maxDeg * Math.PI / 180;
-    var erroPct = 100 * (Math.tan(maxRad) - maxRad) / Math.tan(maxRad);
-
-    var traceTan = { x: xsDeg, y: tanY, mode: 'lines', name: 'tan α (exato)', line: { color: '#963c1e', width: 2.5 } };
-    var traceAprox = { x: xsDeg, y: aproxY, mode: 'lines', name: 'α (radianos, aproximação)', line: { color: '#0d6e6e', width: 2.5, dash: 'dash' } };
-
-    var layout = {
-      height: 340,
-      margin: { l: 55, r: 20, t: 10, b: 45 },
-      xaxis: { title: 'α (graus)' },
-      yaxis: { title: 'tan α  ou  α (rad)' },
-      legend: { orientation: 'h', y: -0.25 }
-    };
-
-    Plotly.react(graficoDiv, [traceTan, traceAprox], layout, PLOTLY_CONFIG);
-
-    maxValor.textContent = maxDeg + '°';
-    erroSpan.textContent = erroPct.toFixed(2) + '%';
-  }
-
-  maxSlider.addEventListener('input', function () {
-    desenhaErro(Number(maxSlider.value));
-  });
-  desenhaErro(Number(maxSlider.value));
-
-  // ---------- Módulo 3: calculadora paralaxe <-> distância ----------
-  var alphaNum = document.getElementById('p3-alpha-num');
-  var alphaRange = document.getElementById('p3-alpha-range');
-  var dNum = document.getElementById('p3-d-num');
-  var dRange = document.getElementById('p3-d-range');
-
-  var atualizando = false;
-
-  function setFromAlpha(alpha) {
-    if (atualizando) return;
-    atualizando = true;
-    alpha = Math.max(0.0005, Math.min(1, alpha));
-    var d = 1 / alpha;
-    alphaNum.value = alpha;
-    alphaRange.value = Math.log10(alpha);
-    dNum.value = Number(d.toFixed(3));
-    dRange.value = Math.log10(d);
-    atualizando = false;
-  }
-
-  function setFromD(d) {
-    if (atualizando) return;
-    atualizando = true;
-    d = Math.max(1, Math.min(2000, d));
-    var alpha = 1 / d;
-    dNum.value = d;
-    dRange.value = Math.log10(d);
-    alphaNum.value = Number(alpha.toPrecision(4));
-    alphaRange.value = Math.log10(alpha);
-    atualizando = false;
-  }
-
-  alphaNum.addEventListener('input', function () { setFromAlpha(Number(alphaNum.value)); });
-  alphaRange.addEventListener('input', function () { setFromAlpha(Math.pow(10, Number(alphaRange.value))); });
-  dNum.addEventListener('input', function () { setFromD(Number(dNum.value)); });
-  dRange.addEventListener('input', function () { setFromD(Math.pow(10, Number(dRange.value))); });
-
-  setFromAlpha(Number(alphaNum.value));
-
-  // Reforço além de responsive:true: garante o reajuste de largura em
-  // navegadores/casos onde o ResizeObserver interno do Plotly não dispara
-  // (ex. redimensionamento da janela do sistema operacional).
-  window.addEventListener('resize', function () {
-    [diagramaDiv, graficoDiv].forEach(function (div) {
-      if (div) Plotly.Plots.resize(div);
-    });
-  });
-})();
-</script>
+<script src="assets/cap01_modulos.js"></script>

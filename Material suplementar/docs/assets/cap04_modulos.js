@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  var SIGMA = 5.670e-5; // erg / (s cm^2 K^4), Stefan-Boltzmann (CGS)
+  var SIGMA = CONST.SIGMA; // erg / (s cm^2 K^4), Stefan-Boltzmann (CGS) — ver comuns.js
 
   function fmt(x, casas) {
     if (!isFinite(x)) return '—';
@@ -172,7 +172,7 @@
     partes.push('<circle cx="130" cy="150" r="' + Rs + '" fill="#f0ede2" stroke="#bbb" stroke-width="1"/>');
     partes.push('<circle cx="130" cy="150" r="' + (Rs + tPx / 2) + '" fill="none" stroke="#1D9E75" stroke-width="' + tPx + '" opacity="0.55"/>');
     partes.push('<text x="130" y="154" text-anchor="middle" font-size="12" fill="#555" font-family="-apple-system,sans-serif">interior</text>');
-    partes.push('<text x="130" y="' + (150 - outer - 8) + '" text-anchor="middle" font-size="11" fill="#1D9E75" font-family="-apple-system,sans-serif">atmosfera</text>');
+    partes.push('<text x="130" y="' + (150 - outer - 8) + '" text-anchor="middle" font-size="11" fill="#17805f" font-family="-apple-system,sans-serif">atmosfera</text>');
 
     // painel direito: zoom com camadas planas
     var rx = 300, ry = 40, rw = 230, rh = 220;

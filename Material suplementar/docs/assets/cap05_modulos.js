@@ -5,15 +5,15 @@
 (function () {
   'use strict';
 
-  // ---------------- Constantes físicas (CGS) ----------------
-  var G = 6.674e-8;
-  var MSUN = 1.989e33;
-  var RSUN = 6.957e10;
-  var LSUN = 3.828e33;
-  var C = 2.998e10;
-  var A_RAD = 7.5657e-15; // constante de radiação, erg/(cm^3 K^4)
-  var K_B = 1.380649e-16;
-  var M_H = 1.6726e-24;
+  // ---------------- Constantes físicas (CGS) — ver comuns.js (CONST) ----------------
+  var G = CONST.G;
+  var MSUN = CONST.MSUN;
+  var RSUN = CONST.RSUN;
+  var LSUN = CONST.LSUN;
+  var C = CONST.C; // era 2.998e10 (4 alg.) antes da centralização — agora usa o valor exato, consistente com os demais capítulos
+  var A_RAD = CONST.A_RAD; // constante de radiação, erg/(cm^3 K^4)
+  var K_B = CONST.KB;
+  var M_H = CONST.MH;
   var PHI_PP = 0.007;
 
   function fmt(x, casas) {
@@ -583,8 +583,8 @@
     if (!Ris) return;
     var RiV = document.getElementById('m9-Ri-valor'), RfV = document.getElementById('m9-Rf-valor'), MV = document.getElementById('m9-M-valor');
     var EgiEl = document.getElementById('m9-Egi'), EgfEl = document.getElementById('m9-Egf'), dEgEl = document.getElementById('m9-dEg'), dEiEl = document.getElementById('m9-dEi');
-    var playBtn = document.getElementById('m9-play');
-    var chart = null, animando = false, frac = 1;
+    var playBtn = document.getElementById('m9-play'), resetBtn = document.getElementById('m9-reset');
+    var chart = null, frac = 1;
     function calcs() {
       var Ri = (Ris.value / 100) * RSUN, Rf = (Rfs.value / 100) * RSUN, M = (Ms.value / 100) * MSUN;
       var Egi = -G * M * M / Ri, Egf = -G * M * M / Rf;
@@ -596,28 +596,25 @@
       var Rcur = c.Ri + (c.Rf - c.Ri) * frac;
       var Rs2 = linspace(Math.min(c.Ri, c.Rf) * 0.6, Math.max(c.Ri, c.Rf) * 1.3, 80);
       var phis = Rs2.map(function (r) { return -G * c.M * c.M / r; });
-      var idxI = nearestIdx(Rs2, c.Ri), idxF = nearestIdx(Rs2, c.Rf), idxCur = nearestIdx(Rs2, Rcur);
-      var ctx = document.getElementById('m9-canvas').getContext('2d');
-      if (chart) chart.destroy();
-      chart = new Chart(ctx, {
-        type: 'line',
-        data: { datasets: [datasetCurva(Rs2, phis), datasetMarcador(Rs2, idxCur, phis)] },
-        options: chartBaseOptions('r (cm)', 'E_g ≈ -GM²/r (erg)', { xScale: { type: 'linear' } })
-      });
+      var idxCur = nearestIdx(Rs2, Rcur);
+      var d0 = datasetCurva(Rs2, phis), d1 = datasetMarcador(Rs2, idxCur, phis);
+      if (!chart) {
+        var ctx = document.getElementById('m9-canvas').getContext('2d');
+        chart = new Chart(ctx, {
+          type: 'line',
+          data: { datasets: [d0, d1] },
+          options: chartBaseOptions('r (cm)', 'E_g ≈ -GM²/r (erg)', { xScale: { type: 'linear' } })
+        });
+      } else {
+        chart.data.datasets[0].data = d0.data;
+        chart.data.datasets[1].data = d1.data;
+        chart.data.datasets[1].pointRadius = d1.pointRadius;
+        chart.update('none');
+      }
       EgiEl.textContent = fmtExp(c.Egi, 2); EgfEl.textContent = fmtExp(c.Egf, 2);
       dEgEl.textContent = fmtExp(c.dEg, 2); dEiEl.textContent = fmtExp(c.dEi, 2);
     }
-    function tick() {
-      frac -= 0.02;
-      if (frac <= 0) { frac = 0; desenha(); animando = false; playBtn.textContent = '▶ Animar contração'; return; }
-      desenha();
-      requestAnimationFrame(tick);
-    }
-    playBtn.addEventListener('click', function () {
-      if (animando) return;
-      animando = true; frac = 1; playBtn.textContent = '❚❚ Contraindo…';
-      requestAnimationFrame(tick);
-    });
+    createAnimController(playBtn, resetBtn, 2.5, function (t) { frac = 1 - t; desenha(); }, { play: '▶ Animar contração', playing: '❚❚ Contraindo…' });
     Ris.addEventListener('input', function () { frac = 1; desenha(); });
     Rfs.addEventListener('input', function () { frac = 1; desenha(); });
     Ms.addEventListener('input', function () { frac = 1; desenha(); });
@@ -829,10 +826,10 @@
     if (!nrs) return;
     var nrV = document.getElementById('m16-nablarad-valor'), naV = document.getElementById('m16-nablaad-valor');
     var nrTxt = document.getElementById('m16-nablarad-texto'), naTxt = document.getElementById('m16-nablaad-texto'), veredito = document.getElementById('m16-veredito');
-    var playBtn = document.getElementById('m16-play');
+    var playBtn = document.getElementById('m16-play'), resetBtn = document.getElementById('m16-reset');
     var stateBolha = setupRawCanvas('m16-canvas-bolha', 320);
     var stateTz = setupRawCanvas('m16-canvas-tz', 320);
-    var frac = 0, animando = false;
+    var frac = 0;
     function valores() { return { nrad: nrs.value / 100, nad: nas.value / 100 }; }
     function desenhaBolha() {
       var v = valores(); var instavel = v.nad < v.nrad;
@@ -879,17 +876,7 @@
       veredito.textContent = v.nad < v.nrad ? 'instável — a bolha sobe (convecção)' : 'estável — a bolha afunda de volta (sem convecção)';
       desenhaBolha(); desenhaTz();
     }
-    function tick() {
-      frac += 0.02;
-      if (frac >= 1) { frac = 1; desenha(); animando = false; playBtn.textContent = '▶ Soltar a bolha'; return; }
-      desenha();
-      requestAnimationFrame(tick);
-    }
-    playBtn.addEventListener('click', function () {
-      if (animando) return;
-      animando = true; frac = 0; playBtn.textContent = '❚❚ Em movimento…';
-      requestAnimationFrame(tick);
-    });
+    createAnimController(playBtn, resetBtn, 2, function (t) { frac = t; desenha(); }, { play: '▶ Soltar a bolha', playing: '❚❚ Em movimento…' });
     nrs.addEventListener('input', function () { frac = 0; desenha(); });
     nas.addEventListener('input', function () { frac = 0; desenha(); });
     window.addEventListener('resize', function () {
@@ -978,9 +965,20 @@
   (function () {
     var qs = document.getElementById('m20-q'), Rs = document.getElementById('m20-R'), vs = document.getElementById('m20-vB');
     if (!qs) return;
+    var presetSel = document.getElementById('m20-preset');
+    var PRESETS_M20 = {
+      massiva: { q: 20, R: 450, vB: 2000 },
+      sol: { q: 30, R: 100, vB: 5000 }
+    };
     var qV = document.getElementById('m20-q-valor'), RV = document.getElementById('m20-R-valor'), vV = document.getElementById('m20-vB-valor');
     var dEl = document.getElementById('m20-d'), tEl = document.getElementById('m20-taumix');
     var chart = null;
+    function aplicaPreset() {
+      var p = PRESETS_M20[presetSel.value];
+      if (!p) return; // "custom": mantém os sliders como estão
+      qs.value = p.q; Rs.value = p.R; vs.value = p.vB;
+      desenha();
+    }
     function desenha() {
       var q = qs.value / 100, R = Rs.value / 100 * RSUN, vB = Number(vs.value);
       qV.textContent = fmt(q, 2); RV.textContent = fmt(Rs.value / 100, 2); vV.textContent = fmt(vB, 0);
@@ -996,7 +994,9 @@
         options: Object.assign(chartBaseOptions('s', '', { xScale: { type: 'logarithmic' } }), { indexAxis: 'y' })
       });
     }
-    qs.addEventListener('input', desenha); Rs.addEventListener('input', desenha); vs.addEventListener('input', desenha);
+    function marcaCustom() { presetSel.value = 'custom'; desenha(); }
+    qs.addEventListener('input', marcaCustom); Rs.addEventListener('input', marcaCustom); vs.addEventListener('input', marcaCustom);
+    presetSel.addEventListener('change', aplicaPreset);
     desenha();
   })();
 

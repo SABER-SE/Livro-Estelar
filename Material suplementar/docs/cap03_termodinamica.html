@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <meta charset="utf-8">
 <title>Termodinâmica</title>
 <meta name="description" content="Módulo interativo do Capítulo 3: primeira lei, capacidades térmicas, coeficientes de expansão e o gradiente adiabático.">
@@ -28,7 +29,7 @@ window.MathJax = {
     <span class="titulo-livro">Estrutura e Evolução Estelar — Notas de Aula (UFS)</span>
     <span class="sep">·</span>
     <!-- TODO: confirmar URL do GitHub Pages / repositório -->
-    <a href="#" title="TODO: confirmar link do repositório no GitHub">Repositório no GitHub</a>
+    <a href="#" id="link-repo" title="TODO: confirmar link do repositório no GitHub">Repositório no GitHub</a>
   </div>
 </div>
 
@@ -946,6 +947,59 @@ usual desse resultado,</p>
   </p>
 </div>
 
+<div class="modulo-card">
+  <div class="rotulo-card">Pistão: compressão adiabática vs. isotérmica, lado a lado</div>
+  <p class="leitura-card" style="margin-top:0;">
+    Dois pistões comprimem a mesma quantidade de gás ideal a partir do
+    mesmo estado inicial $(P_0,V_0,T_0)$ — um isolado termicamente
+    (adiabático, $PV^\gamma=\text{cte}$) e outro em contato com um
+    reservatório térmico (isotérmico, $PV=\text{cte}$, $T$ fixo). A
+    primeira lei vira processo: acompanhe o trabalho e o calor
+    acumulando em tempo real conforme o volume diminui.
+  </p>
+  <div class="controles">
+    <div class="controle">
+      <label for="mpist-gamma">Índice adiabático γ <span class="valor" id="mpist-gamma-valor">1,667</span></label>
+      <input type="range" id="mpist-gamma" min="1.05" max="2" step="0.001" value="1.667">
+    </div>
+    <div class="controle">
+      <label for="mpist-razao">Compressão final V/V₀ <span class="valor" id="mpist-razao-valor">0,30</span></label>
+      <input type="range" id="mpist-razao" min="10" max="80" step="1" value="30">
+    </div>
+    <div class="controle" style="display:flex;gap:0.5rem;align-items:flex-end;">
+      <button type="button" id="mpist-play" class="botao-modulo">▶ Comprimir</button>
+      <button type="button" id="mpist-reset" class="botao-modulo">↺ Reiniciar</button>
+    </div>
+  </div>
+  <div class="grafico-card" style="display:flex;flex-wrap:wrap;gap:1rem;">
+    <div style="flex:1 1 220px;height:260px;">
+      <canvas id="mpist-cilindros" role="img" aria-label="Dois cilindros com pistão comprimindo gás: um adiabático, mudando de cor conforme a temperatura sobe, e outro isotérmico, mantendo a cor por estar em contato com um reservatório térmico." style="width:100%;height:260px;display:block;"></canvas>
+    </div>
+    <div style="flex:1 1 260px;height:260px;">
+      <canvas id="mpist-pv" role="img" aria-label="Diagrama pressão-volume com as curvas adiabática e isotérmica a partir do mesmo estado inicial, com marcadores no estado atual de cada uma." style="width:100%;height:260px;display:block;"></canvas>
+    </div>
+  </div>
+  <p class="leitura-card" style="display:grid;grid-template-columns:1fr 1fr;gap:.3rem 1rem;">
+    <span><strong>Adiabático</strong> — $T/T_0=$<strong id="mpist-ad-T">—</strong>,
+    $W=$<strong id="mpist-ad-W">—</strong>, $Q=0$ (por definição)</span>
+    <span><strong>Isotérmico</strong> — $T/T_0=1$ (fixo),
+    $W=$<strong id="mpist-iso-W">—</strong>, $Q=$<strong id="mpist-iso-Q">—</strong></span>
+  </p>
+  <p class="leitura-card">
+    <strong>O que é calculado de verdade:</strong> $P(V)$ em cada processo
+    vem exatamente de $PV^\gamma=P_0V_0^\gamma$ (adiabático) e
+    $PV=P_0V_0$ (isotérmico); $T/T_0=(PV)/(P_0V_0)$ (gás ideal); o
+    trabalho $W=\int P\,\mathrm dV$ usa as primitivas exatas de cada
+    processo ($W_{\rm iso}=P_0V_0\ln(V/V_0)$;
+    $W_{\rm ad}=(P V-P_0V_0)/(1-\gamma)$), não uma soma numérica
+    aproximada; $Q$ vem da 1ª lei, $Q=\Delta U+W$, com $\Delta U=0$ no
+    caso isotérmico (gás ideal, $U=U(T)$). <strong>O que é apenas
+    ilustrativo:</strong> as proporções e a cor dos cilindros (a cor do
+    pistão adiabático é só uma pista visual de "mais quente", não uma
+    escala de temperatura calibrada), e a velocidade da animação.
+  </p>
+</div>
+
 <div class="caixa contexto">
   <div class="rotulo">Contexto astrofísico — Critério de Schwarzschild e a zona convectiva do Sol</div>
   <div class="conteudo">
@@ -1070,303 +1124,4 @@ uma parcela de gás monoatômico necessariamente varia.</p>
   gerado como complemento ao texto em LaTeX/PDF do Capítulo 3.
 </footer>
 
-<script>
-(function () {
-  var R_GAS = 8.314e7; // erg / (g.K) por unidade de mu
-
-  function alturaFixa(canvasId, px) {
-    var el = document.getElementById(canvasId);
-    el.parentElement.style.height = px + 'px';
-    return el;
-  }
-
-  // ---------- Módulo 1: diagrama P-V e trabalho (área) ----------
-  var m1PSlider = document.getElementById('m1-p');
-  var m1DvSlider = document.getElementById('m1-dv');
-  var m1PValor = document.getElementById('m1-p-valor');
-  var m1DvValor = document.getElementById('m1-dv-valor');
-  var m1WSpan = document.getElementById('m1-w');
-  var m1Canvas = alturaFixa('m1-grafico', 360);
-
-  var V0 = 5;
-  var m1Chart = new Chart(m1Canvas.getContext('2d'), {
-    type: 'line',
-    data: { datasets: [{
-      data: [{ x: V0, y: 5 }, { x: V0 + 2, y: 5 }],
-      borderColor: CORES_GRAFICO.marcador,
-      backgroundColor: CORES_GRAFICO.curva + '40', // ~25% de opacidade
-      borderWidth: 3,
-      pointRadius: 5,
-      pointBackgroundColor: CORES_GRAFICO.marcador,
-      fill: 'origin',
-      tension: 0
-    }] },
-    options: chartBaseOptions('V (volume, unid. arbitrárias)', 'P (pressão, unid. arbitrárias)', {
-      xScale: { type: 'linear', min: 0, max: 10 },
-      yScale: { min: 0, max: 11 }
-    })
-  });
-
-  function desenhaPV() {
-    var P = Number(m1PSlider.value);
-    var dV = Number(m1DvSlider.value);
-    var V1 = V0, V2 = V0 + dV;
-    var W = P * dV;
-
-    var ds = m1Chart.data.datasets[0];
-    ds.data = [{ x: V1, y: P }, { x: V2, y: P }];
-    ds.backgroundColor = (dV >= 0 ? CORES_GRAFICO.curva : CORES_GRAFICO.marcador) + '40';
-    m1Chart.update('none');
-
-    m1PValor.textContent = P.toFixed(1).replace('.', ',');
-    m1DvValor.textContent = (dV >= 0 ? '+' : '') + dV.toFixed(1).replace('.', ',');
-    m1WSpan.textContent = W.toFixed(1).replace('.', ',').replace('-', '−');
-  }
-
-  m1PSlider.addEventListener('input', desenhaPV);
-  m1DvSlider.addEventListener('input', desenhaPV);
-  desenhaPV();
-
-  // ---------- Módulo 2: C_P vs C_V (barras empilhadas) ----------
-  var m2DtSlider = document.getElementById('m2-dt');
-  var m2DtValor = document.getElementById('m2-dt-valor');
-  var m2QvSpan = document.getElementById('m2-qv');
-  var m2QpSpan = document.getElementById('m2-qp');
-  var m2ExtraSpan = document.getElementById('m2-extra');
-  var m2Canvas = alturaFixa('m2-grafico', 340);
-
-  var MU_M2 = 0.6;
-  var CV_M2 = 1.5 * R_GAS / MU_M2;
-  var EXTRA_M2 = R_GAS / MU_M2;
-
-  var m2Options = chartBaseOptions(null, 'calor (erg/g)');
-  m2Options.plugins.legend.display = true;
-  m2Options.plugins.legend.position = 'bottom';
-  m2Options.plugins.legend.labels = { font: { size: 11 }, boxWidth: 12 };
-  m2Options.scales.x.stacked = true;
-  m2Options.scales.y.stacked = true;
-
-  var m2Chart = new Chart(m2Canvas.getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: ['a υ constante (C_V)', 'a P constante (C_P)'],
-      datasets: [
-        { label: 'aumento de U', data: [0, 0], backgroundColor: CORES_GRAFICO.curva, borderRadius: 4 },
-        { label: 'trabalho de expansão (P dV)', data: [0, 0], backgroundColor: CORES_GRAFICO.marcador, borderRadius: 4 }
-      ]
-    },
-    options: m2Options
-  });
-
-  function desenhaCPCV() {
-    var dT = Number(m2DtSlider.value);
-    var qv = CV_M2 * dT;
-    var extra = EXTRA_M2 * dT;
-    var qp = qv + extra;
-
-    m2Chart.data.datasets[0].data = [qv, qv];
-    m2Chart.data.datasets[1].data = [0, extra];
-    m2Chart.update('none');
-
-    m2DtValor.textContent = Math.round(dT) + ' K';
-    m2QvSpan.textContent = qv.toExponential(2);
-    m2QpSpan.textContent = qp.toExponential(2);
-    m2ExtraSpan.textContent = extra.toExponential(2);
-  }
-
-  m2DtSlider.addEventListener('input', desenhaCPCV);
-  desenhaCPCV();
-
-  // ---------- Módulo 3: alpha, delta -> fator delta^2/alpha (curva + marcador) ----------
-  var m3AlphaSlider = document.getElementById('m3-alpha');
-  var m3DeltaSlider = document.getElementById('m3-delta');
-  var m3AlphaValor = document.getElementById('m3-alpha-valor');
-  var m3DeltaValor = document.getElementById('m3-delta-valor');
-  var m3FatorSpan = document.getElementById('m3-fator');
-  var m3Fator2Span = document.getElementById('m3-fator2');
-  var m3Canvas = alturaFixa('m3-grafico', 340);
-
-  var m3Xs = linspace(0, 3, 151);
-
-  var m3Chart = new Chart(m3Canvas.getContext('2d'), {
-    type: 'line',
-    data: { datasets: [
-      datasetCurva(m3Xs, m3Xs.map(function (d) { return d * d; }), CORES_GRAFICO.curva),
-      datasetMarcador(m3Xs, 0, m3Xs.map(function (d) { return d * d; }), CORES_GRAFICO.marcador)
-    ] },
-    options: chartBaseOptions('δ', 'δ² / α', { xScale: { type: 'linear', min: 0, max: 3 }, yScale: { min: 0 } })
-  });
-
-  function desenhaAlphaDelta() {
-    var alpha = Number(m3AlphaSlider.value);
-    var delta = Number(m3DeltaSlider.value);
-    var fator = (delta * delta) / alpha;
-
-    var ys = m3Xs.map(function (d) { return (d * d) / alpha; });
-    var idx = nearestIdx(m3Xs, delta);
-
-    m3Chart.data.datasets[0].data = m3Xs.map(function (x, i) { return { x: x, y: ys[i] }; });
-    var marc = m3Chart.data.datasets[1];
-    marc.data = m3Xs.map(function (x, i) { return { x: x, y: i === idx ? ys[i] : null }; });
-    marc.pointRadius = marc.data.map(function (p) { return p.y === null ? 0 : 6; });
-    m3Chart.options.scales.y.max = Math.max(3, fator * 1.2);
-    m3Chart.update('none');
-
-    m3AlphaValor.textContent = alpha.toFixed(2).replace('.', ',');
-    m3DeltaValor.textContent = delta.toFixed(2).replace('.', ',');
-    m3FatorSpan.textContent = fator.toFixed(3).replace('.', ',');
-    m3Fator2Span.textContent = fator.toFixed(3).replace('.', ',');
-  }
-
-  m3AlphaSlider.addEventListener('input', desenhaAlphaDelta);
-  m3DeltaSlider.addEventListener('input', desenhaAlphaDelta);
-  desenhaAlphaDelta();
-
-  // ---------- Módulo 3b: decomposição de dρ/ρ (barras) ----------
-  var m3bDppSlider = document.getElementById('m3b-dpp');
-  var m3bDttSlider = document.getElementById('m3b-dtt');
-  var m3bDppValor = document.getElementById('m3b-dpp-valor');
-  var m3bDttValor = document.getElementById('m3b-dtt-valor');
-  var m3bTermoP = document.getElementById('m3b-termo-p');
-  var m3bTermoT = document.getElementById('m3b-termo-t');
-  var m3bTotal = document.getElementById('m3b-total');
-  var m3bCanvas = alturaFixa('m3b-grafico', 320);
-
-  function formataSinal(x) {
-    var s = x.toFixed(3).replace('.', ',');
-    return (x >= 0 ? '+' : '') + s;
-  }
-
-  var m3bChart = new Chart(m3bCanvas.getContext('2d'), {
-    type: 'bar',
-    data: {
-      labels: ['α·dP/P', '−δ·dT/T', 'dρ/ρ (soma)'],
-      datasets: [{
-        data: [0, 0, 0],
-        backgroundColor: [CORES_GRAFICO.curva, CORES_GRAFICO.marcador, CORES_GRAFICO.extra],
-        borderRadius: 4
-      }]
-    },
-    options: chartBaseOptions(null, 'variação relativa')
-  });
-
-  function desenhaDrho() {
-    var dpp = Number(m3bDppSlider.value);
-    var dtt = Number(m3bDttSlider.value);
-    var termoP = dpp;       // alpha = 1
-    var termoT = -dtt;      // -delta * dT/T, delta = 1
-    var total = termoP + termoT;
-
-    m3bChart.data.datasets[0].data = [termoP, termoT, total];
-    m3bChart.update('none');
-
-    m3bDppValor.textContent = formataSinal(dpp);
-    m3bDttValor.textContent = formataSinal(dtt);
-    m3bTermoP.textContent = formataSinal(termoP);
-    m3bTermoT.textContent = formataSinal(termoT);
-    m3bTotal.textContent = formataSinal(total);
-  }
-
-  m3bDppSlider.addEventListener('input', desenhaDrho);
-  m3bDttSlider.addEventListener('input', desenhaDrho);
-  desenhaDrho();
-
-  // ---------- Módulo 4: gás ideal, mu -> R/mu (curva + marcador + referências) ----------
-  var m4MuSlider = document.getElementById('m4-mu');
-  var m4MuValor = document.getElementById('m4-mu-valor');
-  var m4ValorSpan = document.getElementById('m4-valor');
-  var m4Canvas = alturaFixa('m4-grafico', 340);
-
-  var m4Xs = linspace(0.4, 2, 161);
-  var referenciasMu = [0.5, 0.6, 1.0]; // H ionizado, núcleo solar, H neutro
-
-  function m4Ys() { return m4Xs.map(function (m) { return R_GAS / m; }); }
-
-  var m4RefData = m4Xs.map(function (x, i) {
-    var y = null;
-    for (var k = 0; k < referenciasMu.length; k++) {
-      if (i === nearestIdx(m4Xs, referenciasMu[k])) { y = R_GAS / x; break; }
-    }
-    return { x: x, y: y };
-  });
-
-  var m4Chart = new Chart(m4Canvas.getContext('2d'), {
-    type: 'line',
-    data: { datasets: [
-      datasetCurva(m4Xs, m4Ys(), CORES_GRAFICO.curva),
-      { data: m4RefData, borderColor: CORES_GRAFICO.extra, backgroundColor: CORES_GRAFICO.extra,
-        pointRadius: m4RefData.map(function (p) { return p.y === null ? 0 : 5; }), borderWidth: 0, showLine: false },
-      datasetMarcador(m4Xs, 0, m4Ys(), CORES_GRAFICO.marcador)
-    ] },
-    options: chartBaseOptions('μ (peso molecular médio)', 'C_P − C_V (erg g⁻¹ K⁻¹)', { xScale: { type: 'linear', min: 0.4, max: 2 } })
-  });
-
-  function desenhaMu() {
-    var mu = Number(m4MuSlider.value);
-    var valor = R_GAS / mu;
-    var idx = nearestIdx(m4Xs, mu);
-
-    var marc = m4Chart.data.datasets[2];
-    marc.data = m4Xs.map(function (x, i) { return { x: x, y: i === idx ? R_GAS / x : null }; });
-    marc.pointRadius = marc.data.map(function (p) { return p.y === null ? 0 : 6; });
-    m4Chart.update('none');
-
-    m4MuValor.textContent = mu.toFixed(2).replace('.', ',');
-    m4ValorSpan.textContent = valor.toExponential(3).replace('.', ',');
-  }
-
-  m4MuSlider.addEventListener('input', desenhaMu);
-  desenhaMu();
-
-  // ---------- Módulo 5: gamma -> nabla_ad (curva + marcador + referências) ----------
-  var m5GammaSlider = document.getElementById('m5-gamma');
-  var m5GammaValor = document.getElementById('m5-gamma-valor');
-  var m5NablaSpan = document.getElementById('m5-nabla');
-  var m5Canvas = alturaFixa('m5-grafico', 340);
-
-  var m5Xs = linspace(1.05, 2, 191);
-  var referenciasGamma = [4 / 3, 5 / 3];
-
-  function m5Ys() { return m5Xs.map(function (g) { return (g - 1) / g; }); }
-
-  var m5RefData = m5Xs.map(function (x, i) {
-    var y = null;
-    for (var k = 0; k < referenciasGamma.length; k++) {
-      if (i === nearestIdx(m5Xs, referenciasGamma[k])) { y = (x - 1) / x; break; }
-    }
-    return { x: x, y: y };
-  });
-
-  var m5Chart = new Chart(m5Canvas.getContext('2d'), {
-    type: 'line',
-    data: { datasets: [
-      datasetCurva(m5Xs, m5Ys(), CORES_GRAFICO.curva),
-      { data: m5RefData, borderColor: CORES_GRAFICO.extra, backgroundColor: CORES_GRAFICO.extra,
-        pointRadius: m5RefData.map(function (p) { return p.y === null ? 0 : 5; }), borderWidth: 0, showLine: false },
-      datasetMarcador(m5Xs, 0, m5Ys(), CORES_GRAFICO.marcador)
-    ] },
-    options: chartBaseOptions('γ (índice adiabático)', '∇_ad = (γ−1)/γ', { xScale: { type: 'linear', min: 1.05, max: 2 }, yScale: { min: 0, max: 0.6 } })
-  });
-
-  function desenhaGamma() {
-    var gamma = Number(m5GammaSlider.value);
-    var nabla = (gamma - 1) / gamma;
-    var idx = nearestIdx(m5Xs, gamma);
-
-    var marc = m5Chart.data.datasets[2];
-    marc.data = m5Xs.map(function (x, i) { return { x: x, y: i === idx ? (x - 1) / x : null }; });
-    marc.pointRadius = marc.data.map(function (p) { return p.y === null ? 0 : 6; });
-    m5Chart.update('none');
-
-    m5GammaValor.textContent = gamma.toFixed(3).replace('.', ',');
-    m5NablaSpan.textContent = nabla.toFixed(3).replace('.', ',');
-  }
-
-  m5GammaSlider.addEventListener('input', desenhaGamma);
-  desenhaGamma();
-
-  // Chart.js já observa o redimensionamento do container internamente
-  // (responsive: true usa ResizeObserver) — diferente do Plotly, não é
-  // necessário nenhum listener de 'resize' manual aqui.
-})();
-</script>
+<script src="assets/cap03_modulos.js"></script>

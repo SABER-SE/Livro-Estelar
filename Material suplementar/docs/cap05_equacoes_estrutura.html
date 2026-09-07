@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <meta charset="utf-8">
 <title>Equações de Estrutura Estelar</title>
 <meta name="description" content="Módulo interativo do Capítulo 5: as quatro (mais uma) equações de estrutura estelar — massa, equilíbrio hidrostático, escalas de tempo, Teorema do Virial, conservação de energia, transporte radiativo/condutivo/convectivo e evolução da composição química, com aplicação numérica para toda equação final.">
@@ -26,7 +27,7 @@ window.MathJax = {
     <span class="titulo-livro">Estrutura e Evolução Estelar — Notas de Aula (UFS)</span>
     <span class="sep">·</span>
     <!-- TODO: confirmar URL do GitHub Pages / repositório -->
-    <a href="#" title="TODO: confirmar link do repositório no GitHub">Repositório no GitHub</a>
+    <a href="#" id="link-repo" title="TODO: confirmar link do repositório no GitHub">Repositório no GitHub</a>
   </div>
 </div>
 
@@ -1497,6 +1498,7 @@ E_g^f - E_g^i = -2\left(E_i^f - E_i^i\right)\,.
     </div>
     <div class="controle" style="display:flex;gap:.5rem;align-items:flex-end;">
       <button type="button" id="m9-play" class="botao-modulo">▶ Animar contração</button>
+      <button type="button" id="m9-reset" class="botao-modulo">↺ Reiniciar</button>
     </div>
   </div>
   <div class="grafico-card"><canvas id="m9-canvas" role="img" aria-label="Gráfico do potencial gravitacional phi proporcional a -1/r em função de r, com dois marcadores nos estados inicial e final da contração, e uma seta ligando os dois." style="width:100%;height:340px;display:block;"></canvas></div>
@@ -2733,6 +2735,7 @@ instabilidade.</p>
     </div>
     <div class="controle" style="display:flex;gap:.5rem;align-items:flex-end;">
       <button type="button" id="m16-play" class="botao-modulo">▶ Soltar a bolha</button>
+      <button type="button" id="m16-reset" class="botao-modulo">↺ Reiniciar</button>
     </div>
   </div>
   <div class="grafico-card" style="display:flex;flex-wrap:wrap;gap:.75rem;">
@@ -3555,26 +3558,54 @@ referência para o Sol, obtemos que o tempo de mistura é da ordem de</p>
   <div class="rotulo-card">Módulo interativo 21 — Calculadora do tempo de mistura \(\tau_{\rm mix}\)</div>
   <div class="controles">
     <div class="controle">
-      <label for="m20-q">Fração do raio na zona convectiva \(q\) <span class="valor" id="m20-q-valor">0,30</span></label>
-      <input type="range" id="m20-q" min="1" max="99" step="1" value="30">
+      <label for="m20-preset">Estrela de referência</label>
+      <select id="m20-preset" class="botao-modulo" style="width:100%;padding:0.5rem;background:#fff;color:#16233a;border:1px solid var(--borda);">
+        <option value="massiva" selected>Estrela massiva (~10 M_☉, núcleo convectivo CNO) — exemplo do texto</option>
+        <option value="sol">Sol (envelope convectivo externo)</option>
+        <option value="custom">Personalizado (sliders abaixo)</option>
+      </select>
+    </div>
+  </div>
+  <div class="controles">
+    <div class="controle">
+      <label for="m20-q">Fração do raio na zona convectiva \(q\) <span class="valor" id="m20-q-valor">0,20</span></label>
+      <input type="range" id="m20-q" min="1" max="99" step="1" value="20">
     </div>
     <div class="controle">
-      <label for="m20-R">Raio da estrela \(R/R_\odot\) <span class="valor" id="m20-R-valor">1,00</span></label>
-      <input type="range" id="m20-R" min="10" max="500" step="1" value="100">
+      <label for="m20-R">Raio da estrela \(R/R_\odot\) <span class="valor" id="m20-R-valor">4,50</span></label>
+      <input type="range" id="m20-R" min="10" max="500" step="1" value="450">
     </div>
     <div class="controle">
-      <label for="m20-vB">Velocidade convectiva \(v_B\) (cm/s) <span class="valor" id="m20-vB-valor">5000</span></label>
-      <input type="range" id="m20-vB" min="100" max="50000" step="100" value="5000">
+      <label for="m20-vB">Velocidade convectiva \(v_B\) (cm/s) <span class="valor" id="m20-vB-valor">2000</span></label>
+      <input type="range" id="m20-vB" min="100" max="50000" step="100" value="2000">
     </div>
   </div>
   <div class="grafico-card"><canvas id="m20-canvas" role="img" aria-label="Barra logarítmica comparando o tempo de mistura calculado com as demais escalas de tempo do capítulo." style="width:100%;height:240px;display:block;"></canvas></div>
   <p class="leitura-card">
     \(d=qR_\star=\)<strong id="m20-d">—</strong> cm;
-    \(\tau_{\rm mix}=d/v_B=\)<strong id="m20-taumix">—</strong> s. Para os
-    valores de referência solares, isso reproduz
-    \(\tau_{\rm mix}\approx3\times10^7\,\mathrm s\) [Equação (5.188)] —
-    intermediário entre o tempo dinâmico e o tempo de Kelvin–Helmholtz,
-    confirmando a hierarquia da Equação (5.189).
+    \(\tau_{\rm mix}=d/v_B=\)<strong id="m20-taumix">—</strong> s.
+  </p>
+  <p class="leitura-card">
+    O exemplo do texto [Equação (5.188)] é o de uma <strong>estrela
+    massiva com núcleo convectivo alimentado pelo ciclo CNO</strong>
+    (Figura da Seção~5.9, zona convectiva mais interna que a do Sol) —
+    não o Sol. Com \(R_\star\approx4{,}5\,R_\odot\) (raio típico de
+    sequência principal para \(\sim10\,M_\odot\)), zona convectiva
+    central \(q\approx0{,}20\) e \(v_B\approx2000\) cm/s (mais lenta que
+    o valor tipicamente citado para a base da zona convectiva solar,
+    consistente com convecção mais profunda e menos vigorosa no núcleo),
+    reproduz-se \(\tau_{\rm mix}\approx3{,}1\times10^7\,\mathrm s\) —
+    o mesmo valor do texto, intermediário entre o tempo dinâmico e o
+    tempo de Kelvin–Helmholtz [Equação (5.189)]. O preset "Sol" usa os
+    valores de referência solares originais deste módulo
+    ($R=1\,R_\odot$, $q=0{,}30$, $v_B=5000$ cm/s), que dão
+    \(\tau_{\rm mix}\approx4{,}2\times10^6\,\mathrm s\) — mais curto,
+    porque a zona convectiva solar é externa e mais rasa. Os valores de
+    \(R_\star\), \(q\) e \(v_B\) da estrela massiva são estimativas
+    ilustrativas (a dedução original das notas não explicita os números
+    intermediários, só o resultado final $\approx3\times10^7$s) —
+    ajustadas para reproduzir esse resultado, não medidas de um modelo
+    estelar específico.
   </p>
 </div>
 
